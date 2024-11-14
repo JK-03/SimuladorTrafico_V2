@@ -1,0 +1,10 @@
+{
+    "cmake.configureOnOpen": true,
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.generator": "Unix Makefiles",
+    "cmake.cmakePath": "/opt/homebrew/bin/cmake",
+    "cmake.environment": {
+        "CXX": "/usr/bin/g++"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}

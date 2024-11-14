@@ -1,0 +1,3 @@
+/Users/jenniferbueso/Downloads/SistemaDeTrafico-master 2/build/CMakeFiles/TrafficSimulation.dir
+/Users/jenniferbueso/Downloads/SistemaDeTrafico-master 2/build/CMakeFiles/edit_cache.dir
+/Users/jenniferbueso/Downloads/SistemaDeTrafico-master 2/build/CMakeFiles/rebuild_cache.dir
