@@ -3,13 +3,17 @@
 #include <iostream>
 #include <cmath>
 
-Grafo::Grafo() : espaciado(200.0f), filas(10), columnas(10) { 
+Grafo::Grafo() : espaciado(200.0f), filas(4), columnas(6) { 
     srand(static_cast<unsigned>(time(0)));
 }
 
 void Grafo::agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, float radio) {
-    nodos[nombre] = Nodo(posicion, tiempoVerde, tiempoRojo, radio);
+    int fila = static_cast<int>(posicion.y / espaciado);
+    int columna = static_cast<int>(posicion.x / espaciado);
+    
+    nodos[nombre] = Nodo(posicion, tiempoVerde, tiempoRojo, fila, columna, radio);
 }
+
 
 void Grafo::agregarArista(const std::string& n1, const std::string& n2) {
     if (nodos.find(n1) != nodos.end() && nodos.find(n2) != nodos.end()) {
@@ -87,48 +91,43 @@ void Grafo::dibujar(sf::RenderWindow& window, bool mostrarEtiquetas) {
     }
 }
 
-void Grafo::agregarNodosAleatorios(int cantidad, float espaciado, const sf::FloatRect& areaValida) {
-    float radioNodo = 20.0f;
+void Grafo::agregarNodosSecuenciales(float espaciado, const sf::FloatRect& areaValida, const sf::Vector2f& primeraPosicion) {
+    int fila = nodoCount / columnas;
+    int columna = nodoCount % columnas;
 
-    for (int i = 0; i < cantidad; ++i) {
-        sf::Vector2f posicionAleatoria;
-        bool posicionValida = false;
+    float x = primeraPosicion.x + columna * espaciado;
+    float y = primeraPosicion.y + fila * espaciado;
 
-        while (!posicionValida) {
-            int filaAleatoria = rand() % filas;
-            int columnaAleatoria = rand() % columnas;
-            posicionAleatoria = sf::Vector2f(columnaAleatoria * espaciado, filaAleatoria * espaciado);
+    if (x <= areaValida.left + areaValida.width && y <= areaValida.top + areaValida.height) {
+        sf::Vector2f posicion(x, y);
+        std::string nombre = "S_" + std::to_string(fila + 1) + "_" + std::to_string(columna + 1);
 
-            if (posicionAleatoria.x - radioNodo >= areaValida.left &&
-                posicionAleatoria.x + radioNodo <= areaValida.left + areaValida.width &&
-                posicionAleatoria.y - radioNodo >= areaValida.top &&
-                posicionAleatoria.y + radioNodo <= areaValida.top + areaValida.height) {
-                
-                posicionValida = true; 
+        agregarNodo(nombre, posicion, 30.0f, 40.0f, 15.0f);
+        agregarAristasSecuenciales();
+
+        nodoCount++;
+    } else if (interfaz && !interfaz->getMostrarMensajeLimite()) { 
+        interfaz->setMostrarMensajeLimite(true);
+    }
+}
+
+void Grafo::agregarAristasSecuenciales() {
+    for (auto it = nodos.begin(); it != nodos.end(); ++it) {
+        int filaActual = it->second.obtenerFila();
+        int columnaActual = it->second.obtenerColumna();
+
+        if (columnaActual < columnas - 1) {
+            std::string nombreSiguiente = "S_" + std::to_string(filaActual + 1) + "_" + std::to_string(columnaActual + 2);  // columna + 2
+            if (nodos.find(nombreSiguiente) != nodos.end()) {
+                agregarArista(it->first, nombreSiguiente);
             }
         }
 
-        std::string nombre = "S_" + std::to_string((int)(posicionAleatoria.y / espaciado)) + "_" + std::to_string((int)(posicionAleatoria.x / espaciado));
-        agregarNodo(nombre, posicionAleatoria, 30.0f, 10.0f, radioNodo);
-
-        int fila = (int)(posicionAleatoria.y / espaciado);
-        int columna = (int)(posicionAleatoria.x / espaciado);
-
-        if (fila > 0) {
-            std::string vecinoArriba = "S_" + std::to_string(fila - 1) + "_" + std::to_string(columna);
-            agregarArista(nombre, vecinoArriba);
-        }
-        if (fila < filas - 1) {
-            std::string vecinoAbajo = "S_" + std::to_string(fila + 1) + "_" + std::to_string(columna);
-            agregarArista(nombre, vecinoAbajo);
-        }
-        if (columna > 0) {
-            std::string vecinoIzquierda = "S_" + std::to_string(fila) + "_" + std::to_string(columna - 1);
-            agregarArista(nombre, vecinoIzquierda);
-        }
-        if (columna < columnas - 1) {
-            std::string vecinoDerecha = "S_" + std::to_string(fila) + "_" + std::to_string(columna + 1);
-            agregarArista(nombre, vecinoDerecha);
+        if (filaActual < filas - 1) {
+            std::string nombreSiguiente = "S_" + std::to_string(filaActual + 2) + "_" + std::to_string(columnaActual + 1);  // fila + 2
+            if (nodos.find(nombreSiguiente) != nodos.end()) {
+                agregarArista(it->first, nombreSiguiente);
+            }
         }
     }
 }
@@ -228,3 +227,8 @@ float Grafo::getPeso(const std::string& desde, const std::string& hacia) const {
     }
     return -1.0f; 
 }
+
+void Grafo::setInterfaz(Interfaz* interfaz) {
+    this->interfaz = interfaz; 
+}
+

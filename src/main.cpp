@@ -25,7 +25,6 @@ void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime) {
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Simulador de Trafico");
-    Grafo grafo; 
 
     std::vector<Carro*> vehiculos; 
 
@@ -33,7 +32,11 @@ int main() {
     if (!font.loadFromFile("../Resources/Roboto-BoldCondensed.ttf")) {
     }
 
-    Interfaz interfaz(font, grafo);
+    Grafo grafo;
+    Interfaz interfaz(font, grafo); 
+
+    grafo.setInterfaz(&interfaz); 
+    
     sf::Clock clock;
 
     while (window.isOpen()) {

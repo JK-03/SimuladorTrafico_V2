@@ -1,9 +1,9 @@
 #include "Nodo.h"
 
-Nodo::Nodo() : posicion(0, 0), radio(15.0f), semaforo(0.0f, 0.0f) {}
+Nodo::Nodo() : posicion(0, 0), radio(15.0f), semaforo(0.0f, 0.0f), fila(0), columna(0) {}
 
-Nodo::Nodo(const sf::Vector2f& pos, float tiempoVerde, float tiempoRojo, float radio)
-    : posicion(pos), radio(radio), semaforo(tiempoVerde, tiempoRojo) {}
+Nodo::Nodo(const sf::Vector2f& pos, float tiempoVerde, float tiempoRojo, int fila, int columna, float radio)
+    : posicion(pos), radio(radio), semaforo(tiempoVerde, tiempoRojo), fila(fila), columna(columna) {}
 
 const sf::Vector2f& Nodo::obtenerPosicion() const {
     return posicion;
@@ -27,4 +27,12 @@ Semaforo& Nodo::obtenerSemaforo() {
 
 const Semaforo& Nodo::obtenerSemaforo() const {
     return semaforo;
+}
+
+int Nodo::obtenerFila() const {
+    return fila;
+}
+
+int Nodo::obtenerColumna() const {
+    return columna;
 }

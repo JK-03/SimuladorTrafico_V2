@@ -7,22 +7,27 @@
 class Nodo {
 public:
     Nodo();
-    Nodo(const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, float radio = 15.0f);
+    Nodo(const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, int fila, int columna, float radio = 15.0f);
 
     const sf::Vector2f& obtenerPosicion() const;
     void setPosicion(const sf::Vector2f& posicion);
 
-    float obtenerRadio() const;  // Nuevo: Obtener el radio
-    void setRadio(float nuevoRadio);  // Nuevo: Modificar el radio
+    float obtenerRadio() const;
+    void setRadio(float nuevoRadio); 
 
     Semaforo& obtenerSemaforo();
     const Semaforo& obtenerSemaforo() const;
 
-    sf::Vector2f posicion;  // Expuesto para acceso directo si es necesario
+    int obtenerFila() const;
+    int obtenerColumna() const;
+
+    sf::Vector2f posicion;
 
 private:
-    float radio;  // Nuevo: Radio del nodo
+    float radio;
     Semaforo semaforo;
+    int fila;
+    int columna;
 };
 
 #endif // NODO_H

@@ -10,7 +10,8 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     botonManager.agregarBoton("Semaforos++", sf::Vector2f(1282, 130), [this]() {
         sf::FloatRect areaValida(50, 50, 1100, 700);
         agregarNodoActivo = true;
-        this->grafo.agregarNodosAleatorios(5, espaciado, areaValida);
+        sf::Vector2f posicionInicial(100, 100);
+        this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
     });
 
     botonManager.agregarBoton("Carros++", sf::Vector2f(1282, 190), [this, &grafo]() {
@@ -73,17 +74,20 @@ void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
     menuTitle.setCharacterSize(24);
     menuTitle.setFillColor(sf::Color::Black);
 
-    sf::Text modoTitle;
-    modoTitle.setFont(font);
-    modoTitle.setString("Modo: ");
-    modoTitle.setCharacterSize(20);
-    modoTitle.setFillColor(sf::Color::Black);
-    modoTitle.setPosition(800, 11);
+    if (mostrarMensajeLimite) {
+        sf::Text mensajeLimite("Limite de nodos alcanzado", font, 25);
+        mensajeLimite.setFillColor(sf::Color::Red);
+        mensajeLimite.setPosition(window.getSize().x - panelAncho - 100, panelSuperiorAltura - 40);
+        window.draw(mensajeLimite);
+
+        if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
+            mostrarMensajeLimite = false;
+        }
+    }
 
     float titleWidth = menuTitle.getGlobalBounds().width;
     menuTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - titleWidth) / 2, panelSuperiorAltura + 10);
     window.draw(menuTitle);
-    window.draw(modoTitle);
 
     botonManager.draw(window);
 }
@@ -102,6 +106,17 @@ void Interfaz::toggleMostrarEtiquetas() {
 
 std::vector<Carro*>& Interfaz::obtenerVehiculos() {
     return vehiculos; 
+}
+
+void Interfaz::setMostrarMensajeLimite(bool estatus) {
+    mostrarMensajeLimite = estatus;
+    if (mostrarMensajeLimite) {
+        mensajeReloj.restart();
+    }
+}
+
+bool Interfaz::getMostrarMensajeLimite() const {
+    return mostrarMensajeLimite;
 }
 
 Interfaz::~Interfaz() {

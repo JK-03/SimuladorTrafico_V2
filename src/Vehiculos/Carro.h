@@ -1,11 +1,13 @@
 #ifndef CARRO_H
 #define CARRO_H
 
+#include "Ciudad/Grafo.h"
 #include "Vehiculo.h"
-#include "Grafo.h"
 #include <vector>
 #include "Interfaz.h"
 #include "Semaforo.h"
+
+class Grafo;
 
 class Carro : public Vehiculo {
 public:
