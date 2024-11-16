@@ -273,30 +273,6 @@ src/Vehiculos/Carro.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.s
 .PHONY : src/Vehiculos/Carro.cpp.s
 
-src/Vehiculos/Ruta.o: src/Vehiculos/Ruta.cpp.o
-.PHONY : src/Vehiculos/Ruta.o
-
-# target to build an object file
-src/Vehiculos/Ruta.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o
-.PHONY : src/Vehiculos/Ruta.cpp.o
-
-src/Vehiculos/Ruta.i: src/Vehiculos/Ruta.cpp.i
-.PHONY : src/Vehiculos/Ruta.i
-
-# target to preprocess a source file
-src/Vehiculos/Ruta.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.i
-.PHONY : src/Vehiculos/Ruta.cpp.i
-
-src/Vehiculos/Ruta.s: src/Vehiculos/Ruta.cpp.s
-.PHONY : src/Vehiculos/Ruta.s
-
-# target to generate assembly for a file
-src/Vehiculos/Ruta.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.s
-.PHONY : src/Vehiculos/Ruta.cpp.s
-
 src/Vehiculos/Vehiculo.o: src/Vehiculos/Vehiculo.cpp.o
 .PHONY : src/Vehiculos/Vehiculo.o
 
@@ -372,9 +348,6 @@ help:
 	@echo "... src/Vehiculos/Carro.o"
 	@echo "... src/Vehiculos/Carro.i"
 	@echo "... src/Vehiculos/Carro.s"
-	@echo "... src/Vehiculos/Ruta.o"
-	@echo "... src/Vehiculos/Ruta.i"
-	@echo "... src/Vehiculos/Ruta.s"
 	@echo "... src/Vehiculos/Vehiculo.o"
 	@echo "... src/Vehiculos/Vehiculo.i"
 	@echo "... src/Vehiculos/Vehiculo.s"

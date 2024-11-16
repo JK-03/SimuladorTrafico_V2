@@ -156,24 +156,10 @@ CMakeFiles/TrafficSimulation.dir/src/Ciudad/Nodo.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TrafficSimulation.dir/src/Ciudad/Nodo.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Ciudad/Nodo.cpp" -o CMakeFiles/TrafficSimulation.dir/src/Ciudad/Nodo.cpp.s
 
-CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o: CMakeFiles/TrafficSimulation.dir/flags.make
-CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o: /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Ruta.cpp
-CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o: CMakeFiles/TrafficSimulation.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o -MF CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o.d -o CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o -c "/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Vehiculos/Ruta.cpp"
-
-CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Vehiculos/Ruta.cpp" > CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.i
-
-CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Vehiculos/Ruta.cpp" -o CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.s
-
 CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o: CMakeFiles/TrafficSimulation.dir/flags.make
 CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o: /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Semaforo.cpp
 CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o: CMakeFiles/TrafficSimulation.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o -MF CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o.d -o CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o -c "/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Ciudad/Semaforo.cpp"
 
 CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.i: cmake_force
@@ -187,7 +173,7 @@ CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.s: cmake_force
 CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o: CMakeFiles/TrafficSimulation.dir/flags.make
 CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o: /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Vehiculo.cpp
 CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o: CMakeFiles/TrafficSimulation.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o -MF CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o.d -o CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o -c "/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Vehiculos/Vehiculo.cpp"
 
 CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.i: cmake_force
@@ -206,7 +192,6 @@ TrafficSimulation_OBJECTS = \
 "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.o" \
 "CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.o" \
 "CMakeFiles/TrafficSimulation.dir/src/Ciudad/Nodo.cpp.o" \
-"CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o" \
 "CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o" \
 "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o"
 
@@ -219,7 +204,6 @@ TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Interfaz/BotonManager.cp
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.o
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.o
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Ciudad/Nodo.cpp.o
-TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Ruta.cpp.o
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/build.make
@@ -227,7 +211,7 @@ TrafficSimulation: /opt/homebrew/lib/libsfml-graphics.2.6.2.dylib
 TrafficSimulation: /opt/homebrew/lib/libsfml-window.2.6.2.dylib
 TrafficSimulation: /opt/homebrew/lib/libsfml-system.2.6.2.dylib
 TrafficSimulation: CMakeFiles/TrafficSimulation.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable TrafficSimulation"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable TrafficSimulation"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/TrafficSimulation.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
