@@ -4,6 +4,7 @@
 #include <limits>
 #include <queue>
 #include <algorithm>
+#include <unordered_set>
 
 Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velocidad, 
              Grafo& grafo, const std::string& rutaImagen, 
@@ -12,11 +13,9 @@ Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velo
     : Vehiculo(nombre, posicion, velocidad, rutaImagen), 
       grafo(grafo), 
       ruta(ruta),
-      nodosSemaforos(nodosSemaforos) 
+      nodosSemaforos(nodosSemaforos), 
+      velocidad(10.0f) 
 {
-    if (!textura.loadFromFile(rutaImagen)) {
-    }
-
     sprite.setTexture(textura);
     sprite.setScale(0.1f, 0.1f); 
     this->posicion = !ruta.empty() ? ruta.front() : posicion;
@@ -25,14 +24,12 @@ Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velo
 
 void Carro::mover(float deltaTime) {
     if (ruta.size() < 2) {
-        //std::cout << "Ruta insuficiente para mover." << std::endl;
         return;
     }
 
-    std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 60.0f);
+    std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 30.0f);
 
     if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() && !grafo.estaSemaforoVerde(nodoActual)) {
-        //std::cout << "Semáforo en rojo en el nodo " << nodoActual << ". El carro se detiene." << std::endl;
         return;
     }
 
@@ -49,7 +46,6 @@ void Carro::mover(float deltaTime) {
     sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
 
     if (std::hypot(nuevaPosicion.x - posicionActual.x, nuevaPosicion.y - posicionActual.y) >= distanciaTotal) {
-        //std::cout << "Nodo alcanzado: (" << posicionSiguiente.x << ", " << posicionSiguiente.y << ")" << std::endl;
         ruta.erase(ruta.begin());
 
         if (!ruta.empty()) {
@@ -62,57 +58,47 @@ void Carro::mover(float deltaTime) {
     sprite.setPosition(posicion);
 }
 
-void simularFlujo(Grafo& grafo, float deltaTiempo) {
-    grafo.actualizarSemaforos(deltaTiempo);
+std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad) {
+    std::vector<sf::Vector2f> ruta;
+    std::unordered_set<std::string> nodosVisitados;
+    std::string nodoActual = nodoInicio;
 
-    for (const auto& [nombreNodo, nodo] : grafo.getNodosSemaforos()) {
-        if (nombreNodo.empty()) {
-            //std::cerr << "Error: El nodo no tiene nombre asignado." << std::endl;
-            continue; 
+    ruta.push_back(grafo.obtenerPosicionNodo(nodoActual));
+    nodosVisitados.insert(nodoActual);
+
+    for (int i = 1; i < cantidad; ++i) {
+        std::vector<std::string> nodosConectados = grafo.obtenerNodosConectados(nodoActual);
+
+        if (nodosConectados.empty()) {
+            break;
         }
 
-        if (!grafo.estaSemaforoVerde(nombreNodo)) {
-            //std::cout << "Semáforo en rojo, detenido en nodo: " << nombreNodo << std::endl;
+        std::vector<std::string> nodosNoVisitados;
+        std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
+                     [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0; });
+
+        if (!nodosNoVisitados.empty()) {
+            int indiceAleatorio = rand() % nodosNoVisitados.size();
+            nodoActual = nodosNoVisitados[indiceAleatorio];
+            nodosVisitados.insert(nodoActual);
         } else {
-            //std::cout << "Semáforo en verde en el nodo: " << nombreNodo << ". Avanzando..." << std::endl;
+            break;
         }
-    }
-}
 
-float calcularDistancia(const sf::Vector2f& a, const sf::Vector2f& b) {
-    return std::sqrt(std::pow(b.x - a.x, 2) + std::pow(b.y - a.y, 2));
-}
-
-void simularMovimiento(Grafo& grafo, sf::Vector2f& posicionCarro,const std::string& nodoDestino, float deltaTiempo) {
-    float velocidad = 5000.0f; 
-    bool carroDetenido = false;
-
-    const Nodo& nodo = grafo.getNodosSemaforos().at(nodoDestino);
-    float distancia = calcularDistancia(posicionCarro, nodo.obtenerPosicion());
-
-    if (distancia <= nodo.obtenerRadio()) {
-        if (!nodo.obtenerSemaforo().estaVerde()) {
-            carroDetenido = true;
-        }
+        sf::Vector2f posicionNodo = grafo.obtenerPosicionNodo(nodoActual);
+        ruta.push_back(posicionNodo);
     }
 
-    if (!carroDetenido) {
-        sf::Vector2f direccion = nodo.obtenerPosicion() - posicionCarro;
-        float longitud = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
+    ruta.push_back(grafo.obtenerPosicionNodo(nodoInicio));
 
-        if (longitud != 0) direccion /= longitud; 
-
-        posicionCarro += direccion * velocidad * deltaTiempo;
-    }
+    return ruta;
 }
 
 void Carro::dibujar(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
-sf::Vector2f Carro::obtenerDireccionDesdeArista(const Grafo& grafo, 
-                                                const std::string& nodoDesde, 
-                                                const std::string& nodoHacia) {
+sf::Vector2f Carro::obtenerDireccionDesdeArista(const Grafo& grafo, const std::string& nodoDesde, const std::string& nodoHacia) {
     return grafo.obtenerPosicionNodo(nodoHacia) - grafo.obtenerPosicionNodo(nodoDesde);
 }
 
@@ -121,7 +107,7 @@ void Carro::calcularRuta(const std::string& nodoInicio, const std::string& nodoD
     std::map<std::string, std::string> predecesores;
 
     auto comparador = [](const std::pair<std::string, float>& a, const std::pair<std::string, float>& b) {
-        return a.second > b.second; 
+        return a.second > b.second;
     };
 
     std::priority_queue<std::pair<std::string, float>, 
@@ -157,4 +143,12 @@ void Carro::calcularRuta(const std::string& nodoInicio, const std::string& nodoD
             }
         }
     }
+}
+
+void Carro::actualizarVelocidad(float nuevaVelocidad) {
+    velocidad = nuevaVelocidad;
+}
+
+float Carro::getVelocidad() const {
+    return velocidad;
 }

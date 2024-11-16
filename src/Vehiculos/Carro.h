@@ -20,11 +20,18 @@ public:
     void dibujar(sf::RenderWindow& window);
     void calcularRuta(const std::string& nodoInicio, const std::string& nodoDestino);
     void mover(float deltaTime); 
+    void actualizarVelocidad(float nuevaVelocidad);
+
+    float getVelocidad() const;
+
+    std::vector<sf::Vector2f> generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad);
     
 private:
     Grafo& grafo; 
     std::vector<sf::Vector2f> ruta;
     std::map<std::string, Nodo> nodosSemaforos;
+
+    float velocidad;
 };
 
 #endif // CARRO_H

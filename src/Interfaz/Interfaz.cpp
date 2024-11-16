@@ -1,11 +1,11 @@
 #include "Interfaz.h"
 #include "Carro.h"
 #include "Vehiculo.h"
-#include "Ruta.h"
 #include <iostream>
+#include <ctime>
 
 Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
-    : font(fuente), botonManager(fuente), grafo(grafo), espaciado(200.0f) {
+    : font(fuente), botonManager(fuente), grafo(grafo), espaciado(200.0f), climaActual(SOLEADO), temperatura(25.0f), velocidadClima(1.0f) {
 
     botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 130), [this]() {
         sf::FloatRect areaValida(50, 50, 1100, 700);
@@ -20,15 +20,19 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
         std::vector<std::string> nodosDisponibles = grafo.obtenerNodosConectados(nodoInicio);
         sf::Vector2f posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
-        std::vector<sf::Vector2f> rutaCiclica = generarRutaCiclica(grafo, nodoInicio, 20);
+
+        std::vector<sf::Vector2f> rutaCiclica;
+        Carro carro("Carro_" + std::to_string(index), posicionNodo, 50.0f, grafo, "../Resources/Carro.png", rutaCiclica, grafo.getNodosSemaforos());
+
+        rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
 
         sf::Vector2f nuevaPosicionNodo = posicionNodo;
-        nuevaPosicionNodo.x -= 20.0f; 
-        nuevaPosicionNodo.y -= 20.0f; 
+        nuevaPosicionNodo.x -= 20.0f;
+        nuevaPosicionNodo.y -= 20.0f;
 
         Carro* nuevoCarro = new Carro(
             "Carro_" + std::to_string(index),
-            nuevaPosicionNodo, 
+            nuevaPosicionNodo,
             5.0f,
             grafo,
             "../Resources/Carro.png",
@@ -40,13 +44,36 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         index++;
     });
 
+
     botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 310), [this]() {
         toggleMostrarEtiquetas(); 
     });
 
-     botonManager.agregarBoton("Clima", sf::Vector2f(1285, 250), [this]() {
-        toggleMostrarEtiquetas(); 
+    botonManager.agregarBoton("Clima", sf::Vector2f(1285, 250), [this]() {
+        cambiarClima();  
     });
+}
+
+void Interfaz::cambiarClima() {
+    int climaRandom = rand() % 3;
+    switch (climaRandom) {
+        case 0:
+            climaActual = SOLEADO;
+            temperatura = 25.0f;
+            velocidadClima = 1.0f;
+            break;
+        case 1:
+            climaActual = LLUVIA;
+            temperatura = 15.0f;
+            velocidadClima = 0.7f;
+            break;
+        case 2:
+            climaActual = NIEVE;
+            temperatura = -5.0f;
+            velocidadClima = 0.5f;
+            break;
+    }
+    actualizarVelocidadesDeVehiculos();  
 }
 
 void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
@@ -61,13 +88,30 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
 
     sf::Text textoClima;
     textoClima.setFont(font);
-    textoClima.setString("Clima: Soleado, 25°C");
+    std::string climaTexto = "Clima: " + obtenerNombreClima(climaActual) + ", " + std::to_string(temperatura) + "°C";
+    textoClima.setString(climaTexto);
     textoClima.setCharacterSize(25);
     textoClima.setFillColor(sf::Color::Black);
     textoClima.setPosition(20.0f, 10.0f);
     window.draw(textoClima);
 
     dibujarMensajeLimite(window);
+}
+
+std::string Interfaz::obtenerNombreClima(Clima clima) {
+    switch (clima) {
+        case SOLEADO: return "Soleado";
+        case LLUVIA: return "Lluvia";
+        case NIEVE: return "Nieve";
+        default: return "Desconocido";
+    }
+}
+
+void Interfaz::actualizarVelocidadesDeVehiculos() {
+    for (auto* carro : vehiculos) {
+        carro->actualizarVelocidad(velocidadClima); 
+        std::cout << "Velocidad actual del carro: " << carro->getVelocidad() << std::endl;
+    }
 }
 
 void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
@@ -115,7 +159,6 @@ void Interfaz::dibujarMensajeLimite(sf::RenderWindow& window) {
         }
     }
 }
-
 
 void Interfaz::manejarEventos(const sf::Event& event, sf::RenderWindow& window) {
     botonManager.manejarEventos(event, window);

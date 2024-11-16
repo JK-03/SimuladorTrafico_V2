@@ -14,12 +14,13 @@ void Grafo::agregarNodo(const std::string& nombre, const sf::Vector2f& posicion,
     nodos[nombre] = Nodo(posicion, tiempoVerde, tiempoRojo, fila, columna, radio);
 }
 
-
-void Grafo::agregarArista(const std::string& n1, const std::string& n2) {
-    if (nodos.find(n1) != nodos.end() && nodos.find(n2) != nodos.end()) {
-        aristas.emplace_back(n1, n2);
+void Grafo::agregarArista(const std::string& nodoA, const std::string& nodoB) {
+    if (nodos.find(nodoA) != nodos.end() && nodos.find(nodoB) != nodos.end()) {
+        aristas.push_back(std::make_pair(nodoA, nodoB));
+        aristas.push_back(std::make_pair(nodoB, nodoA));
     }
 }
+
 
 bool Grafo::estaAristaLibre(const std::string& desde, const std::string& hacia) {
     return std::find(aristas.begin(), aristas.end(), std::make_pair(desde, hacia)) == aristas.end();

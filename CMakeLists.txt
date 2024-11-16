@@ -25,7 +25,6 @@ set(SOURCES
     src/Vehiculos/Carro.cpp
     src/Interfaz/Interfaz.cpp
     src/Ciudad/Nodo.cpp
-    src/Vehiculos/Ruta.cpp
     src/Ciudad/Semaforo.cpp
     src/Vehiculos/Vehiculo.cpp
 )
