@@ -10,7 +10,7 @@
 #include "Interfaz/Interfaz.h"
 #include <unordered_map>
 
-class Interfaz; 
+class Interfaz;
 
 class Grafo {
     public:

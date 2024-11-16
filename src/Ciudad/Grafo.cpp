@@ -117,14 +117,14 @@ void Grafo::agregarAristasSecuenciales() {
         int columnaActual = it->second.obtenerColumna();
 
         if (columnaActual < columnas - 1) {
-            std::string nombreSiguiente = "S_" + std::to_string(filaActual + 1) + "_" + std::to_string(columnaActual + 2);  // columna + 2
+            std::string nombreSiguiente = "S_" + std::to_string(filaActual + 1) + "_" + std::to_string(columnaActual + 2);
             if (nodos.find(nombreSiguiente) != nodos.end()) {
                 agregarArista(it->first, nombreSiguiente);
             }
         }
 
         if (filaActual < filas - 1) {
-            std::string nombreSiguiente = "S_" + std::to_string(filaActual + 2) + "_" + std::to_string(columnaActual + 1);  // fila + 2
+            std::string nombreSiguiente = "S_" + std::to_string(filaActual + 2) + "_" + std::to_string(columnaActual + 1);
             if (nodos.find(nombreSiguiente) != nodos.end()) {
                 agregarArista(it->first, nombreSiguiente);
             }

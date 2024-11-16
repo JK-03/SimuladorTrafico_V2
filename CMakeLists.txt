@@ -4,12 +4,20 @@ project(SistemaDeTrafico)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(SFML 2.5 REQUIRED graphics window system)
+# Buscar y configurar SFML
+find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
 
-include_directories(${SFML_INCLUDE_DIR})
+# Incluir directorios para SFML
+include_directories(${SFML_INCLUDE_DIRS})
 
+# Incluir directorios adicionales
+include_directories(/usr/local/include)
 include_directories(src src/Ciudad src/Vehiculos src/Interfaz)
 
+# Especificar las rutas para las bibliotecas
+link_directories(/usr/local/lib)
+
+# Especificar los archivos fuente
 set(SOURCES
     src/main.cpp
     src/Ciudad/Grafo.cpp
@@ -22,6 +30,13 @@ set(SOURCES
     src/Vehiculos/Vehiculo.cpp
 )
 
+# Crear el ejecutable
 add_executable(TrafficSimulation ${SOURCES})
 
-target_link_libraries(TrafficSimulation sfml-graphics sfml-window sfml-system)
+# Enlazar con las bibliotecas de SFML y Thor
+target_link_libraries(TrafficSimulation 
+    sfml-graphics 
+    sfml-window 
+    sfml-system 
+    thor
+)

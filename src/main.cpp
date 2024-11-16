@@ -1,20 +1,26 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "Carro.h"
+#include "Vehiculos/Carro.h"
 #include "Grafo.h"
 #include "Interfaz.h"
 
 void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, const std::vector<Carro*>& vehiculos, bool mostrarEtiquetas) {
-    window.clear(sf::Color(255, 255, 255)); 
-    interfaz.crearPanelSuperior(window);
+    window.clear(sf::Color(255, 229, 217));  
+
+    sf::RectangleShape fondoGrafo(sf::Vector2f(window.getSize().x, window.getSize().y));
+    fondoGrafo.setFillColor(sf::Color(255, 229, 217));
+    window.draw(fondoGrafo);
+
     interfaz.crearPanelDerecho(window);
-    grafo.dibujar(window, mostrarEtiquetas);
-    
+    interfaz.crearPanelSuperior(window);
+
+    grafo.dibujar(window, mostrarEtiquetas);  
+
     for (const auto& carro : vehiculos) {
         carro->dibujar(window);
     }
 
-    window.display();
+    window.display();  
 }
 
 void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime) {

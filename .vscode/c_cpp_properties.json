@@ -4,7 +4,8 @@
             "name": "Mac",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/opt/homebrew/opt/sfml/include/**"
+                "/opt/homebrew/opt/sfml/include/**",
+                "/usr/local/include/Thor/**"
             ],
             "defines": [],
             "macFrameworkPath": [

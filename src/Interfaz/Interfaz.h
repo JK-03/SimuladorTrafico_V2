@@ -18,6 +18,7 @@ public:
     void crearPanelDerecho(sf::RenderWindow& window);
     void manejarEventos(const sf::Event& event, sf::RenderWindow& window);
     void setMostrarMensajeLimite(bool estatus);
+    void dibujarMensajeLimite(sf::RenderWindow& window);
 
     bool isMostrarEtiquetas() const;
     void mostrarMensajeTemporal();
