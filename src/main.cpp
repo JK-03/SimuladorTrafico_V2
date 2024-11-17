@@ -16,12 +16,17 @@ void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, con
 
     grafo.dibujar(window, mostrarEtiquetas);  
 
+    for (const auto& par : grafo.obtenerNodos()) {
+        par.second.dibujar(window);
+    }
+
     for (const auto& carro : vehiculos) {
         carro->dibujar(window);
     }
 
     window.display();  
 }
+
 
 void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime) {
     for (auto& carro : vehiculos) {

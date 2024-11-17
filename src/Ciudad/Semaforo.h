@@ -1,25 +1,36 @@
 #ifndef SEMAFORO_H
 #define SEMAFORO_H
-#include <queue>
 
-class Carro;
+#include <SFML/System/Clock.hpp>
 
 class Semaforo {
 public:
-    Semaforo(float tiempoVerde, float tiempoRojo);
-    void actualizar(float deltaTiempo);
+    enum Estado {
+        Verde,
+        Rojo,
+        Amarillo,
+        ParpadeandoAmarillo
+    };
+
+    Semaforo(float tiempoVerde, float tiempoRojo, float tiempoAmarillo);
+
+    Estado obtenerEstado() const;
     bool estaVerde() const; 
+    bool estaRojo() const; 
+    bool estaAmarillo() const; 
+    bool estaParpadeandoAmarillo() const; 
+    const sf::Clock& obtenerReloj() const;
 
-    float getTiempoVerde() const { return tiempoVerde; }
-    float getTiempoRojo() const { return tiempoRojo; }
-
-    std::queue<Carro*> carrosEsperando;
+    void actualizar(float deltaTime);
+    sf::Clock& obtenerReloj();
 
 private:
     float tiempoVerde;
     float tiempoRojo;
+    float tiempoAmarillo;
+    Estado estado;
     float tiempoTranscurrido;
-    bool enVerde;
+    sf::Clock reloj;
 };
 
 #endif // SEMAFORO_H

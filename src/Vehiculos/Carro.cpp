@@ -27,7 +27,7 @@ void Carro::mover(float deltaTime) {
         return;
     }
 
-    std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 30.0f);
+    std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 35.0f);
 
     if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() && !grafo.estaSemaforoVerde(nodoActual)) {
         return;

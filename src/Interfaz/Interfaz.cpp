@@ -3,18 +3,20 @@
 #include "Vehiculo.h"
 #include <iostream>
 #include <ctime>
+#include <iomanip>
+#include <sstream>
 
 Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     : font(fuente), botonManager(fuente), grafo(grafo), espaciado(200.0f), climaActual(SOLEADO), temperatura(25.0f), velocidadClima(1.0f) {
 
-    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 130), [this]() {
+    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 210), [this]() {
         sf::FloatRect areaValida(50, 50, 1100, 700);
         agregarNodoActivo = true;
         sf::Vector2f posicionInicial(100, 100);
         this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
     });
 
-    botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 190), [this, &grafo]() {
+    botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 270), [this, &grafo]() {
         static int index = 0;
 
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
@@ -45,11 +47,11 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
 
-    botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 310), [this]() {
+    botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 440), [this]() {
         toggleMostrarEtiquetas(); 
     });
 
-    botonManager.agregarBoton("Clima", sf::Vector2f(1285, 250), [this]() {
+    botonManager.agregarBoton("Clima", sf::Vector2f(1285, 380), [this]() {
         cambiarClima();  
     });
 }
@@ -73,7 +75,7 @@ void Interfaz::cambiarClima() {
             velocidadClima = 0.5f;
             break;
     }
-    actualizarVelocidadesDeVehiculos();  
+    actualizarVelocidadesDeVehiculos();
 }
 
 void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
@@ -88,8 +90,10 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
 
     sf::Text textoClima;
     textoClima.setFont(font);
-    std::string climaTexto = "Clima: " + obtenerNombreClima(climaActual) + ", " + std::to_string(temperatura) + "°C";
-    textoClima.setString(climaTexto);
+    std::ostringstream climaTexto; 
+    climaTexto << "Clima: " << obtenerNombreClima(climaActual) 
+               << ", " << std::fixed << std::setprecision(1) << temperatura << "°C";
+    textoClima.setString(climaTexto.str());
     textoClima.setCharacterSize(25);
     textoClima.setFillColor(sf::Color::Black);
     textoClima.setPosition(20.0f, 10.0f);
@@ -97,6 +101,7 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
 
     dibujarMensajeLimite(window);
 }
+
 
 std::string Interfaz::obtenerNombreClima(Clima clima) {
     switch (clima) {
@@ -109,7 +114,7 @@ std::string Interfaz::obtenerNombreClima(Clima clima) {
 
 void Interfaz::actualizarVelocidadesDeVehiculos() {
     for (auto* carro : vehiculos) {
-        carro->actualizarVelocidad(velocidadClima); 
+        carro->actualizarVelocidad(velocidadClima);
         std::cout << "Velocidad actual del carro: " << carro->getVelocidad() << std::endl;
     }
 }
@@ -117,6 +122,7 @@ void Interfaz::actualizarVelocidadesDeVehiculos() {
 void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
     const float panelAncho = 200;
     const float panelSuperiorAltura = 50;
+    const float anchoLinea = 150.0f;
 
     sf::RectangleShape panelDerecho(sf::Vector2f(panelAncho, window.getSize().y - panelSuperiorAltura));
     panelDerecho.setFillColor(sf::Color(255, 202, 212));
@@ -124,6 +130,17 @@ void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
     panelDerecho.setOutlineColor(sf::Color::White);
     panelDerecho.setPosition(window.getSize().x - panelAncho, panelSuperiorAltura);
     window.draw(panelDerecho);
+
+    sf::RectangleShape lineaDivisoria(sf::Vector2f(anchoLinea, 2.0f)); 
+    lineaDivisoria.setFillColor(sf::Color::White);
+    float posicionX = window.getSize().x - panelAncho + (panelAncho - anchoLinea) / 2;
+    lineaDivisoria.setPosition(posicionX, panelSuperiorAltura + 130);
+    window.draw(lineaDivisoria);
+
+    sf::RectangleShape lineaDivisoria2(sf::Vector2f(anchoLinea, 2.0f)); 
+    lineaDivisoria2.setFillColor(sf::Color::White);
+    lineaDivisoria2.setPosition(posicionX, panelSuperiorAltura + 300);
+    window.draw(lineaDivisoria2);
 
     sf::Font fontMenu;
     if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {

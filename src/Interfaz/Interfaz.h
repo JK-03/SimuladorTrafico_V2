@@ -5,8 +5,8 @@
 #include "BotonManager.h"
 #include <memory>
 #include "Grafo.h"
-#include "Carro.h"
-#include <vector>
+
+class Carro;  // Declaración anticipada de Carro
 
 class Grafo;
 

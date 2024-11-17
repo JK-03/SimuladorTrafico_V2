@@ -1,21 +1,60 @@
 #include "Semaforo.h"
 
-Semaforo::Semaforo(float tiempoVerde, float tiempoRojo)
-    : tiempoVerde(tiempoVerde), tiempoRojo(tiempoRojo), tiempoTranscurrido(0), enVerde(true) {}
+Semaforo::Semaforo(float tiempoVerde, float tiempoRojo, float tiempoAmarillo)
+    : tiempoVerde(tiempoVerde), tiempoRojo(tiempoRojo), tiempoAmarillo(tiempoAmarillo),
+      estado(Verde), tiempoTranscurrido(0.0f) {}
 
-void Semaforo::actualizar(float deltaTiempo) {
-    tiempoTranscurrido += deltaTiempo;
-
-    if (enVerde && tiempoTranscurrido >= tiempoVerde) {
-        enVerde = false; 
-        tiempoTranscurrido = 0; 
-    }
-    else if (!enVerde && tiempoTranscurrido >= tiempoRojo) {
-        enVerde = true;
-        tiempoTranscurrido = 0; 
-    }
+Semaforo::Estado Semaforo::obtenerEstado() const {
+    return estado;
 }
 
 bool Semaforo::estaVerde() const {
-    return enVerde;
+    return estado == Verde;
+}
+
+bool Semaforo::estaRojo() const {
+    return estado == Rojo;
+}
+
+bool Semaforo::estaAmarillo() const {
+    return estado == Amarillo;
+}
+
+bool Semaforo::estaParpadeandoAmarillo() const {
+    return estado == ParpadeandoAmarillo;
+}
+
+sf::Clock& Semaforo::obtenerReloj() {
+    return reloj;
+}
+
+const sf::Clock& Semaforo::obtenerReloj() const {
+    return reloj;
+}
+
+void Semaforo::actualizar(float deltaTime) {
+    tiempoTranscurrido += deltaTime;
+
+    switch (estado) {
+        case Verde:
+            if (tiempoTranscurrido >= tiempoVerde) {
+                estado = ParpadeandoAmarillo;
+                tiempoTranscurrido = 0.0f;
+            }
+            break;
+
+        case ParpadeandoAmarillo:
+            if (tiempoTranscurrido >= tiempoAmarillo) {
+                estado = Rojo;
+                tiempoTranscurrido = 0.0f;
+            }
+            break;
+
+        case Rojo:
+            if (tiempoTranscurrido >= tiempoRojo) {
+                estado = Verde;
+                tiempoTranscurrido = 0.0f;
+            }
+            break;
+    }
 }

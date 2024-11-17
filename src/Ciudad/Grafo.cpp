@@ -7,11 +7,11 @@ Grafo::Grafo() : espaciado(200.0f), filas(4), columnas(6) {
     srand(static_cast<unsigned>(time(0)));
 }
 
-void Grafo::agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, float radio) {
+void Grafo::agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, float tiempoAmarillo, float radio) {
     int fila = static_cast<int>(posicion.y / espaciado);
     int columna = static_cast<int>(posicion.x / espaciado);
     
-    nodos[nombre] = Nodo(posicion, tiempoVerde, tiempoRojo, fila, columna, radio);
+    nodos[nombre] = Nodo(posicion.x, posicion.y, radio, tiempoVerde, tiempoRojo, tiempoAmarillo, fila, columna);
 }
 
 void Grafo::agregarArista(const std::string& nodoA, const std::string& nodoB) {
@@ -20,7 +20,6 @@ void Grafo::agregarArista(const std::string& nodoA, const std::string& nodoB) {
         aristas.push_back(std::make_pair(nodoB, nodoA));
     }
 }
-
 
 bool Grafo::estaAristaLibre(const std::string& desde, const std::string& hacia) {
     return std::find(aristas.begin(), aristas.end(), std::make_pair(desde, hacia)) == aristas.end();
@@ -37,7 +36,7 @@ bool Grafo::estaSemaforoVerde(const std::string& nodo) const {
 sf::Vector2f Grafo::obtenerPosicionNodo(const std::string& nombreNodo) const {
     auto it = nodos.find(nombreNodo);
     if (it != nodos.end()) {
-        sf::Vector2f posicionOriginal = it->second.posicion;
+        sf::Vector2f posicionOriginal = it->second.obtenerPosicion();
         return posicionOriginal;
     } else {
         return sf::Vector2f(0, 0);
@@ -60,9 +59,8 @@ Semaforo& Grafo::obtenerSemaforo(const std::string& nombreNodo) {
 }
 
 void Grafo::dibujar(sf::RenderWindow& window, bool mostrarEtiquetas) {
-    if (!font.loadFromFile("../Resources/Roboto-BoldCondensed.ttf")) {
-    }
-
+    if (!font.loadFromFile("../Resources/Roboto-BoldCondensed.ttf")) {}
+    
     for (const auto& arista : aristas) {
         const auto& n1 = nodos.find(arista.first);
         const auto& n2 = nodos.find(arista.second);
@@ -77,7 +75,26 @@ void Grafo::dibujar(sf::RenderWindow& window, bool mostrarEtiquetas) {
     }
 
     for (const auto& nodo : nodos) {
-        sf::Color color = nodo.second.obtenerSemaforo().estaVerde() ? sf::Color::Green : sf::Color::Red;
+        const auto& semaforo = nodo.second.obtenerSemaforo();
+
+        sf::Color color;
+
+        if (semaforo.estaVerde()) {
+            color = sf::Color::Green;
+        } else if (semaforo.estaRojo()) {
+            color = sf::Color::Red;
+        } else if (semaforo.estaAmarillo()) {
+            color = sf::Color(255, 255, 0);
+        } else if (semaforo.estaParpadeandoAmarillo()) {
+            if (static_cast<int>(nodo.second.obtenerSemaforo().obtenerReloj().getElapsedTime().asSeconds()) % 2 == 0) {
+                color = sf::Color(255, 255, 0, 255);
+            } else {
+                color = sf::Color(255, 255, 0, 50);
+            }
+        } else {
+            color = sf::Color::White;
+        }
+
         sf::CircleShape shape(10);
         shape.setPosition(nodo.second.obtenerPosicion().x - 10, nodo.second.obtenerPosicion().y - 10); 
         shape.setFillColor(color);
@@ -103,7 +120,7 @@ void Grafo::agregarNodosSecuenciales(float espaciado, const sf::FloatRect& areaV
         sf::Vector2f posicion(x, y);
         std::string nombre = "S_" + std::to_string(fila + 1) + "_" + std::to_string(columna + 1);
 
-        agregarNodo(nombre, posicion, 30.0f, 40.0f, 15.0f);
+        agregarNodo(nombre, posicion, 30.0f, 40.0f, 20.0f, 15.0f);
         agregarAristasSecuenciales();
 
         nodoCount++;
@@ -232,4 +249,3 @@ float Grafo::getPeso(const std::string& desde, const std::string& hacia) const {
 void Grafo::setInterfaz(Interfaz* interfaz) {
     this->interfaz = interfaz; 
 }
-
