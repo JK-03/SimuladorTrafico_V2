@@ -2,7 +2,9 @@
 #include <iostream>
 #include "Vehiculos/Carro.h"
 #include "Grafo.h"
+#include <cmath>
 #include "Interfaz.h"
+#include "Ruta.h"
 
 void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, const std::vector<Carro*>& vehiculos, bool mostrarEtiquetas) {
     window.clear(sf::Color(255, 229, 217));  
@@ -22,15 +24,21 @@ void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, con
 
     for (const auto& carro : vehiculos) {
         carro->dibujar(window);
+        carro->mostrarColision(window, vehiculos); 
     }
 
     window.display();  
 }
 
-
-void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime) {
+void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime, const sf::Font& font) {
     for (auto& carro : vehiculos) {
-        carro->mover(deltaTime);
+        carro->mover(deltaTime, font);
+    }
+}
+
+void verificarColisiones(std::vector<Carro*>& vehiculos) {
+    for (auto& carro : vehiculos) {
+        carro->verificarColisiones(vehiculos);
     }
 }
 
@@ -62,7 +70,8 @@ int main() {
 
         float deltaTime = clock.restart().asSeconds(); 
         grafo.actualizarSemaforos(deltaTime);
-        moverCarros(interfaz.obtenerVehiculos(), deltaTime);
+        moverCarros(interfaz.obtenerVehiculos(), deltaTime, font);
+        verificarColisiones(interfaz.obtenerVehiculos());
         dibujarTodo(window, grafo, interfaz, interfaz.obtenerVehiculos(), interfaz.isMostrarEtiquetas());
     }
 

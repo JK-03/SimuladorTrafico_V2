@@ -58,3 +58,13 @@ void Semaforo::actualizar(float deltaTime) {
             break;
     }
 }
+
+void Semaforo::ponerRojo() {
+    estado = Rojo;
+    tiempoTranscurrido = 0.0f;
+}
+
+void Semaforo::ponerVerde() {
+    estado = Verde;
+    tiempoTranscurrido = 0.0f; 
+}

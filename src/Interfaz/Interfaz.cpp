@@ -1,7 +1,9 @@
 #include "Interfaz.h"
 #include "Carro.h"
+#include "Ruta.h"
 #include "Vehiculo.h"
 #include <iostream>
+#include <cmath>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
@@ -26,8 +28,22 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         std::vector<sf::Vector2f> rutaCiclica;
         Carro carro("Carro_" + std::to_string(index), posicionNodo, 50.0f, grafo, "../Resources/Carro.png", rutaCiclica, grafo.getNodosSemaforos());
 
-        rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
+        bool posicionValida = true;
+        for (auto& carro : vehiculos) {
+            if (std::sqrt(std::pow(carro->obtenerPosicion().x - posicionNodo.x, 2) + std::pow(carro->obtenerPosicion().y - posicionNodo.y, 2)) < 50) {
+                posicionValida = false;
+                break;
+            }
+        }
 
+        if (!posicionValida) {
+            std::cout << "Intentando añadir en una posición diferente." << std::endl;
+            nodoInicio = grafo.obtenerNodoAleatorio();
+            posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
+        }
+
+        rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
+        
         sf::Vector2f nuevaPosicionNodo = posicionNodo;
         nuevaPosicionNodo.x -= 20.0f;
         nuevaPosicionNodo.y -= 20.0f;
@@ -62,17 +78,17 @@ void Interfaz::cambiarClima() {
         case 0:
             climaActual = SOLEADO;
             temperatura = 25.0f;
-            velocidadClima = 1.0f;
+            velocidadClima = 10.0f;
             break;
         case 1:
             climaActual = LLUVIA;
             temperatura = 15.0f;
-            velocidadClima = 0.7f;
+            velocidadClima = 5.7f;
             break;
         case 2:
             climaActual = NIEVE;
             temperatura = -5.0f;
-            velocidadClima = 0.5f;
+            velocidadClima = 20.f;
             break;
     }
     actualizarVelocidadesDeVehiculos();
@@ -115,7 +131,7 @@ std::string Interfaz::obtenerNombreClima(Clima clima) {
 void Interfaz::actualizarVelocidadesDeVehiculos() {
     for (auto* carro : vehiculos) {
         carro->actualizarVelocidad(velocidadClima);
-        std::cout << "Velocidad actual del carro: " << carro->getVelocidad() << std::endl;
+        //std::cout << "Velocidad actual del carro: " << carro->getVelocidad() << std::endl;
     }
 }
 

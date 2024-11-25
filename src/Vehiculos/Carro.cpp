@@ -4,17 +4,19 @@
 #include <limits>
 #include <queue>
 #include <algorithm>
+#include <SFML/Graphics.hpp>
 #include <unordered_set>
 
 Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velocidad, 
              Grafo& grafo, const std::string& rutaImagen, 
              const std::vector<sf::Vector2f>& ruta, 
-             const std::map<std::string, Nodo>& nodosSemaforos)
+             const std::map<std::string, Nodo>& nodosSemaforos, float tamanoCuadro)
     : Vehiculo(nombre, posicion, velocidad, rutaImagen), 
       grafo(grafo), 
       ruta(ruta),
       nodosSemaforos(nodosSemaforos), 
-      velocidad(10.0f) 
+      velocidad(10.0f),
+      tamanoCuadro(tamanoCuadro)
 {
     sprite.setTexture(textura);
     sprite.setScale(0.1f, 0.1f); 
@@ -22,7 +24,15 @@ Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velo
     sprite.setPosition(this->posicion); 
 }
 
-void Carro::mover(float deltaTime) {
+void Carro::mover(float deltaTime, const sf::Font& font) {
+    if (colisionado) {
+        tiempoDetenido -= deltaTime;
+        if (tiempoDetenido <= 0) {
+            colisionado = false;
+        }
+        return;
+    }
+    
     if (ruta.size() < 2) {
         return;
     }
@@ -37,7 +47,7 @@ void Carro::mover(float deltaTime) {
     sf::Vector2f posicionSiguiente = ruta[1];
 
     sf::Vector2f direccion = posicionSiguiente - posicionActual;
-    float distanciaTotal = std::hypot(direccion.x, direccion.y);
+    float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
 
     if (distanciaTotal > 0) {
         direccion /= distanciaTotal;
@@ -45,7 +55,7 @@ void Carro::mover(float deltaTime) {
 
     sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
 
-    if (std::hypot(nuevaPosicion.x - posicionActual.x, nuevaPosicion.y - posicionActual.y) >= distanciaTotal) {
+    if (std::sqrt((nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) + (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)) >= distanciaTotal) {
         ruta.erase(ruta.begin());
 
         if (!ruta.empty()) {
@@ -92,6 +102,12 @@ std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::str
     ruta.push_back(grafo.obtenerPosicionNodo(nodoInicio));
 
     return ruta;
+}
+
+void Carro::detener(float tiempo) {
+    colisionado = true;
+    tiempoDetenido = tiempo;
+    velocidad = 0.0f;
 }
 
 void Carro::dibujar(sf::RenderWindow& window) {
@@ -151,4 +167,38 @@ void Carro::actualizarVelocidad(float nuevaVelocidad) {
 
 float Carro::getVelocidad() const {
     return velocidad;
+}
+
+bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
+    const float radioColision = 20.0f;
+
+    for (size_t i = 0; i < listaDeCarros.size(); ++i) {
+        if (this != listaDeCarros[i]) { 
+            float distancia = std::sqrt(
+                std::pow(this->obtenerPosicion().x - listaDeCarros[i]->obtenerPosicion().x, 2) + 
+                std::pow(this->obtenerPosicion().y - listaDeCarros[i]->obtenerPosicion().y, 2)
+            );
+
+            if (distancia < radioColision) { 
+                this->detener(10.0f); 
+                listaDeCarros[i]->detener(10.0f);  
+
+                return true;  
+            }
+        }
+    }
+
+    return false; 
+}
+
+void Carro::mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& listaDeCarros) {
+    bool hayColision = verificarColisiones(listaDeCarros); 
+
+    if (hayColision) {
+        colisionador.mostrarColision(window, true); 
+    }
+}
+
+bool Carro::colisionDetectada() const { 
+    return colisionado; 
 }

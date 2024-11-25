@@ -120,7 +120,7 @@ void Grafo::agregarNodosSecuenciales(float espaciado, const sf::FloatRect& areaV
         sf::Vector2f posicion(x, y);
         std::string nombre = "S_" + std::to_string(fila + 1) + "_" + std::to_string(columna + 1);
 
-        agregarNodo(nombre, posicion, 30.0f, 40.0f, 20.0f, 15.0f);
+        agregarNodo(nombre, posicion, 50.0f, 10.0f, 10.0f, 15.0f);
         agregarAristasSecuenciales();
 
         nodoCount++;

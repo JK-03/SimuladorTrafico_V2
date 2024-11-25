@@ -4,5 +4,5 @@ CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o: \
   /opt/homebrew/include/SFML/System/Clock.hpp \
   /opt/homebrew/include/SFML/System/Export.hpp \
   /opt/homebrew/include/SFML/Config.hpp \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/usr/include/TargetConditionals.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/TargetConditionals.h \
   /opt/homebrew/include/SFML/System/Time.hpp

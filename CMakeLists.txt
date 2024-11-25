@@ -27,6 +27,7 @@ set(SOURCES
     src/Ciudad/Nodo.cpp
     src/Ciudad/Semaforo.cpp
     src/Vehiculos/Vehiculo.cpp
+    src/Vehiculos/Colisionador.cpp
 )
 
 # Crear el ejecutable
@@ -37,5 +38,5 @@ target_link_libraries(TrafficSimulation
     sfml-graphics 
     sfml-window 
     sfml-system 
-    thor
+    
 )

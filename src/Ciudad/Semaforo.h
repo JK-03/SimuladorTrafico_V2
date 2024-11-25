@@ -22,6 +22,10 @@ public:
     const sf::Clock& obtenerReloj() const;
 
     void actualizar(float deltaTime);
+
+    void ponerRojo();  // Nueva función para cambiar a rojo
+    void ponerVerde(); // Nueva función para cambiar a verde
+
     sf::Clock& obtenerReloj();
 
 private:
