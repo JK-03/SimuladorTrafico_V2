@@ -70,6 +70,18 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     botonManager.agregarBoton("Clima", sf::Vector2f(1285, 380), [this]() {
         cambiarClima();  
     });
+
+    botonManager.agregarBoton("E. Colisiones", sf::Vector2f(1285, 500), [this]() {
+        for (auto it = vehiculos.begin(); it != vehiculos.end(); ) {
+            if ((*it)->colisionado) {
+                delete *it; 
+                it = vehiculos.erase(it); 
+            } else {
+                ++it; 
+            }
+        }
+    });
+
 }
 
 void Interfaz::cambiarClima() {
@@ -131,7 +143,6 @@ std::string Interfaz::obtenerNombreClima(Clima clima) {
 void Interfaz::actualizarVelocidadesDeVehiculos() {
     for (auto* carro : vehiculos) {
         carro->actualizarVelocidad(velocidadClima);
-        //std::cout << "Velocidad actual del carro: " << carro->getVelocidad() << std::endl;
     }
 }
 

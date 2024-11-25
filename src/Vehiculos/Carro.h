@@ -23,7 +23,6 @@ public:
     void calcularRuta(const std::string& nodoInicio, const std::string& nodoDestino);
     void mover(float deltaTime, const sf::Font& font);
     void detener(float tiempo);
-    bool verificarColisiones(const std::vector<Carro*>& listaDeCarros);
     const std::map<std::string, Nodo>& getNodosSemaforos() const; 
     void actualizarVelocidad(float nuevaVelocidad);
 
@@ -32,6 +31,8 @@ public:
     std::vector<sf::Vector2f> generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad);
 
     bool colisionDetectada() const;
+    bool verificarColisiones(const std::vector<Carro*>& listaDeCarros);
+    bool colisionado = false;
 
     void mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& listaDeCarros);
 
@@ -42,7 +43,6 @@ private:
     std::vector<sf::Vector2f> ruta;
     std::map<std::string, Nodo> nodosSemaforos;
 
-    bool colisionado = false;
     float tiempoDetenido = 0;
     float velocidad;
 

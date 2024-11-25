@@ -183,6 +183,9 @@ bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
                 this->detener(10.0f); 
                 listaDeCarros[i]->detener(10.0f);  
 
+                this->colisionado = true;
+                listaDeCarros[i]->colisionado = true;
+
                 return true;  
             }
         }
