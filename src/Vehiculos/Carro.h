@@ -36,6 +36,8 @@ public:
 
     void mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& listaDeCarros);
 
+    bool enEspera = false;
+    const float radioEspera = 50.0f; // Radio en el que los carros esperan por la colisión
     
 private:
     Grafo& grafo; 

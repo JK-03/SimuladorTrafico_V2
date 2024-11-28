@@ -30,17 +30,21 @@ void Carro::mover(float deltaTime, const sf::Font& font) {
         if (tiempoDetenido <= 0) {
             colisionado = false;
         }
-        return;
+        return; // No mover si está colisionado
     }
-    
+
+    if (enEspera) {
+        return; // No mover si está esperando debido a una colisión cercana
+    }
+
     if (ruta.size() < 2) {
-        return;
+        return; // No hacer nada si no hay más puntos en la ruta
     }
 
     std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 35.0f);
 
     if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() && !grafo.estaSemaforoVerde(nodoActual)) {
-        return;
+        return; // No mover si está en un semáforo en rojo
     }
 
     sf::Vector2f posicionActual = ruta.front();
@@ -55,7 +59,8 @@ void Carro::mover(float deltaTime, const sf::Font& font) {
 
     sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
 
-    if (std::sqrt((nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) + (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)) >= distanciaTotal) {
+    if (std::sqrt((nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
+                  (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)) >= distanciaTotal) {
         ruta.erase(ruta.begin());
 
         if (!ruta.empty()) {
@@ -67,6 +72,7 @@ void Carro::mover(float deltaTime, const sf::Font& font) {
 
     sprite.setPosition(posicion);
 }
+
 
 std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad) {
     std::vector<sf::Vector2f> ruta;
@@ -171,28 +177,59 @@ float Carro::getVelocidad() const {
 
 bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
     const float radioColision = 20.0f;
+    bool estaEnRadioDeColision = false;
 
     for (size_t i = 0; i < listaDeCarros.size(); ++i) {
-        if (this != listaDeCarros[i]) { 
+        Carro* otroCarro = listaDeCarros[i];
+
+        // Ignorar el carro actual
+        if (this != otroCarro) {
             float distancia = std::sqrt(
-                std::pow(this->obtenerPosicion().x - listaDeCarros[i]->obtenerPosicion().x, 2) + 
-                std::pow(this->obtenerPosicion().y - listaDeCarros[i]->obtenerPosicion().y, 2)
+                std::pow(this->obtenerPosicion().x - otroCarro->obtenerPosicion().x, 2) +
+                std::pow(this->obtenerPosicion().y - otroCarro->obtenerPosicion().y, 2)
             );
 
-            if (distancia < radioColision) { 
-                this->detener(10.0f); 
-                listaDeCarros[i]->detener(10.0f);  
+            // Si hay colisión directa
+            if (distancia < radioColision) {
+                // Verificar si ambos carros están en un nodo de semáforo
+                std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 35.0f);
+                std::string nodoOtroCarro = grafo.obtenerNodoDesdePosicion(otroCarro->obtenerPosicion(), 35.0f);
+
+                if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() &&
+                    nodosSemaforos.find(nodoOtroCarro) != nodosSemaforos.end()) {
+                    // Ignorar colisión si ambos están en un nodo de semáforo
+                    continue;
+                }
+
+                // Marcar ambos carros como colisionados y detenerlos
+                this->detener(10.0f);
+                otroCarro->detener(10.0f);
 
                 this->colisionado = true;
-                listaDeCarros[i]->colisionado = true;
+                otroCarro->colisionado = true;
 
-                return true;  
+                return true; // Colisión detectada
+            }
+
+            // Si el carro está dentro del radio de espera de otro carro colisionado
+            if (otroCarro->colisionado && distancia < radioEspera) {
+                estaEnRadioDeColision = true;
             }
         }
     }
 
-    return false; 
+    // Si está en el radio de colisión, no moverse pero no afectar a otros
+    if (estaEnRadioDeColision) {
+        enEspera = true; // Marcar como en espera
+    } else {
+        enEspera = false; // Liberar estado de espera si no hay colisión cercana
+    }
+
+    return false; // No hay colisión directa
 }
+
+
+
 
 void Carro::mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& listaDeCarros) {
     bool hayColision = verificarColisiones(listaDeCarros); 
