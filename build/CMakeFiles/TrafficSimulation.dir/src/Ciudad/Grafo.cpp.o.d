@@ -1038,5 +1038,7 @@ CMakeFiles/TrafficSimulation.dir/src/Ciudad/Grafo.cpp.o: \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Nodo.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/Interfaz.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/BotonManager.h \
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Trafico/ArbolSemaforos.h \
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Trafico/NodoArbol.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/istream

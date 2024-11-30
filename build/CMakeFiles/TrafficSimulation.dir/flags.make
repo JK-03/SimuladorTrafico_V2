@@ -4,7 +4,7 @@
 # compile CXX with /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Ciudad" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Vehiculos" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Interfaz" -isystem /opt/homebrew/include
+CXX_INCLUDES = -I/usr/local/include -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Ciudad" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Vehiculos" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Interfaz" -I"/Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura de Datos I/SistemaDeTrafico/src/Trafico" -isystem /opt/homebrew/include
 
 CXX_FLAGSarm64 = -std=gnu++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk
 

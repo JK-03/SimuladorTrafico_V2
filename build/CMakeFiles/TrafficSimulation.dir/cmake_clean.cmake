@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/BotonManager.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.o"
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.o.d"
+  "CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.o"
+  "CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.o"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Colisionador.cpp.o"

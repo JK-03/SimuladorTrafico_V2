@@ -1,5 +1,6 @@
-CMakeFiles/TrafficSimulation.dir/src/main.cpp.o: \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/main.cpp \
+CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.o: \
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Trafico/ArbolSemaforos.cpp \
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Trafico/ArbolSemaforos.h \
   /opt/homebrew/include/SFML/Graphics.hpp \
   /opt/homebrew/include/SFML/Window.hpp \
   /opt/homebrew/include/SFML/System.hpp \
@@ -1033,16 +1034,8 @@ CMakeFiles/TrafficSimulation.dir/src/main.cpp.o: \
   /opt/homebrew/include/SFML/Graphics/Sprite.hpp \
   /opt/homebrew/include/SFML/Graphics/Text.hpp \
   /opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/iostream \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/istream \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Carro.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Colisionador.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Grafo.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Semaforo.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Nodo.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/Interfaz.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/BotonManager.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Trafico/ArbolSemaforos.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Trafico/NodoArbol.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Vehiculo.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Ruta.h
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Nodo.h \
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Semaforo.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/iostream \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/istream

@@ -249,6 +249,30 @@ src/Interfaz/Interfaz.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.s
 .PHONY : src/Interfaz/Interfaz.cpp.s
 
+src/Trafico/ArbolSemaforos.o: src/Trafico/ArbolSemaforos.cpp.o
+.PHONY : src/Trafico/ArbolSemaforos.o
+
+# target to build an object file
+src/Trafico/ArbolSemaforos.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.o
+.PHONY : src/Trafico/ArbolSemaforos.cpp.o
+
+src/Trafico/ArbolSemaforos.i: src/Trafico/ArbolSemaforos.cpp.i
+.PHONY : src/Trafico/ArbolSemaforos.i
+
+# target to preprocess a source file
+src/Trafico/ArbolSemaforos.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.i
+.PHONY : src/Trafico/ArbolSemaforos.cpp.i
+
+src/Trafico/ArbolSemaforos.s: src/Trafico/ArbolSemaforos.cpp.s
+.PHONY : src/Trafico/ArbolSemaforos.s
+
+# target to generate assembly for a file
+src/Trafico/ArbolSemaforos.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.s
+.PHONY : src/Trafico/ArbolSemaforos.cpp.s
+
 src/Vehiculos/Carro.o: src/Vehiculos/Carro.cpp.o
 .PHONY : src/Vehiculos/Carro.o
 
@@ -369,6 +393,9 @@ help:
 	@echo "... src/Interfaz/Interfaz.o"
 	@echo "... src/Interfaz/Interfaz.i"
 	@echo "... src/Interfaz/Interfaz.s"
+	@echo "... src/Trafico/ArbolSemaforos.o"
+	@echo "... src/Trafico/ArbolSemaforos.i"
+	@echo "... src/Trafico/ArbolSemaforos.s"
 	@echo "... src/Vehiculos/Carro.o"
 	@echo "... src/Vehiculos/Carro.i"
 	@echo "... src/Vehiculos/Carro.s"
