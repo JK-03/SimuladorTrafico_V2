@@ -11,11 +11,56 @@
 Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     : font(fuente), botonManager(fuente), grafo(grafo), espaciado(200.0f), climaActual(SOLEADO), temperatura(25.0f), velocidadClima(1.0f) {
 
-    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 210), [this]() {
-        sf::FloatRect areaValida(50, 50, 1100, 700);
-        agregarNodoActivo = true;
-        sf::Vector2f posicionInicial(100, 100);
-        this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
+    botonManager.agregarBoton("Calles++", sf::Vector2f(1285, 210), [this]() {
+            sf::FloatRect areaValida(50, 50, 1100, 700);
+            agregarNodoActivo = true;
+            sf::Vector2f posicionInicial(100, 100);
+            this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
+        });
+
+    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 560), [this, &grafo]() {
+        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+        sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
+
+        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
+        
+        if (!conexiones.empty()) {
+            Nodo* nodoConectado = conexiones[0];
+            sf::Vector2f posicionConectada = nodoConectado->obtenerPosicion();
+
+            float direccionX = posicionConectada.x - posicionNodo.x;
+            float direccionY = posicionConectada.y - posicionNodo.y;
+
+            float longitud = std::sqrt(direccionX * direccionX + direccionY * direccionY);
+            direccionX /= longitud; 
+            direccionY /= longitud; 
+
+            float distancia = 25.0f;
+            float semaforoX, semaforoY;
+
+            if (std::abs(direccionX) > std::abs(direccionY)) {  
+                if (direccionX > 0) {
+                    semaforoX = posicionNodo.x + direccionX * distancia; 
+                } else {
+                    semaforoX = posicionNodo.x + direccionX * distancia;  
+                }
+                semaforoY = posicionNodo.y; 
+            } else { 
+                if (direccionY > 0) {
+                    semaforoX = posicionNodo.x; 
+                    semaforoY = posicionNodo.y + direccionY * distancia;  
+                } else {
+                    semaforoX = posicionNodo.x; 
+                    semaforoY = posicionNodo.y + direccionY * distancia;  
+                }
+            }
+
+            Semaforo* nuevoSemaforo = new Semaforo(30.f, 20.f, 20.f, 20.f, sf::Vector2f(semaforoX, semaforoY), 30.0f);
+            nodoRelacionado->asignarSemaforo(nuevoSemaforo);
+            arbolSemaforos.insertar(nuevoSemaforo, nodoRelacionado, nodoConectado);
+        } else {
+            std::cout << "El nodo no tiene conexiones." << std::endl;
+        }
     });
 
     botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 270), [this, &grafo]() {
@@ -31,13 +76,12 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         bool posicionValida = true;
         for (auto& carro : vehiculos) {
             if (std::sqrt(std::pow(carro->obtenerPosicion().x - posicionNodo.x, 2) + std::pow(carro->obtenerPosicion().y - posicionNodo.y, 2)) < 50) {
-                posicionValida = false;
+                posicionValida = false; 
                 break;
             }
         }
 
         if (!posicionValida) {
-            std::cout << "Intentando añadir en una posición diferente." << std::endl;
             nodoInicio = grafo.obtenerNodoAleatorio();
             posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
         }
@@ -45,9 +89,7 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
         
         sf::Vector2f nuevaPosicionNodo = posicionNodo;
-        nuevaPosicionNodo.x -= 20.0f;
-        nuevaPosicionNodo.y -= 20.0f;
-
+        
         Carro* nuevoCarro = new Carro(
             "Carro_" + std::to_string(index),
             nuevaPosicionNodo,
@@ -233,4 +275,12 @@ bool Interfaz::getMostrarMensajeLimite() const {
 
 Interfaz::~Interfaz() {
     vehiculos.clear();
+}
+
+void Interfaz::dibujarSemaforos(sf::RenderWindow& window) {
+    arbolSemaforos.dibujarSemaforos(window); 
+}
+
+void Interfaz::actualizarSemaforos(float deltaTime) {
+    arbolSemaforos.actualizarSemaforos(deltaTime);
 }

@@ -5,9 +5,11 @@
 #include "BotonManager.h"
 #include <memory>
 #include "Grafo.h"
+#include "Trafico/ArbolSemaforos.h"
+#include "Trafico/NodoArbol.h"
 
-class Carro;  // Declaración anticipada de Carro
-
+class NodoArbol;
+class Carro; 
 class Grafo;
 
 class Interfaz {
@@ -21,6 +23,8 @@ public:
     void dibujarMensajeLimite(sf::RenderWindow& window);
     void actualizarVelocidad(float nuevaVelocidad); 
     void cambiarClima();
+    void dibujarSemaforos(sf::RenderWindow& window);
+    void actualizarSemaforos(float deltaTime);
 
     bool isMostrarEtiquetas() const;
     void mostrarMensajeTemporal();
@@ -31,12 +35,15 @@ public:
 
     bool agregarNodoActivo = false; 
     bool mostrarMensajeLimite = false;
+
+    
     
     ~Interfaz();
 
 private:
-    sf::Font font;
+    ArbolSemaforos arbolSemaforos;
 
+    sf::Font font;
     sf::Clock relojMensaje;
 
     BotonManager botonManager;
@@ -58,6 +65,7 @@ private:
 
     std::string obtenerNombreClima(Clima clima);
     void actualizarVelocidadesDeVehiculos();
+
 };
 
 #endif // INTERFAZ_H

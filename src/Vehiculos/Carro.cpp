@@ -20,31 +20,17 @@ Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velo
 {
     sprite.setTexture(textura);
     sprite.setScale(0.1f, 0.1f); 
-    this->posicion = !ruta.empty() ? ruta.front() : posicion;
+    if (!ruta.empty()) {
+        this->posicion = ruta.front();
+    } else {
+        this->posicion = posicion;
+    }
     sprite.setPosition(this->posicion); 
 }
 
-void Carro::mover(float deltaTime, const sf::Font& font) {
-    if (colisionado) {
-        tiempoDetenido -= deltaTime;
-        if (tiempoDetenido <= 0) {
-            colisionado = false;
-        }
-        return; // No mover si está colisionado
-    }
-
-    if (enEspera) {
-        return; // No mover si está esperando debido a una colisión cercana
-    }
-
+void Carro::mover(float deltaTime) {
     if (ruta.size() < 2) {
-        return; // No hacer nada si no hay más puntos en la ruta
-    }
-
-    std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 35.0f);
-
-    if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() && !grafo.estaSemaforoVerde(nodoActual)) {
-        return; // No mover si está en un semáforo en rojo
+        return;
     }
 
     sf::Vector2f posicionActual = ruta.front();
@@ -54,15 +40,20 @@ void Carro::mover(float deltaTime, const sf::Font& font) {
     float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
 
     if (distanciaTotal > 0) {
-        direccion /= distanciaTotal;
+        direccion /= distanciaTotal; // Normalizamos la dirección
     }
 
     sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
 
-    if (std::sqrt((nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
-                  (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)) >= distanciaTotal) {
-        ruta.erase(ruta.begin());
+    // Verificar si ya llegamos al siguiente nodo
+    float distanciaRecorrida = std::sqrt(
+        (nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
+        (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)
+    );
 
+    if (distanciaRecorrida >= distanciaTotal) {
+        // Si llegamos al siguiente nodo, eliminamos el nodo actual
+        ruta.erase(ruta.begin());
         if (!ruta.empty()) {
             posicion = ruta.front();
         }
@@ -70,8 +61,9 @@ void Carro::mover(float deltaTime, const sf::Font& font) {
         posicion = nuevaPosicion;
     }
 
-    sprite.setPosition(posicion);
+    sprite.setPosition(posicion); // Actualizamos la posición del sprite
 }
+
 
 
 std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad) {
@@ -120,10 +112,6 @@ void Carro::dibujar(sf::RenderWindow& window) {
     window.draw(sprite);
 }
 
-sf::Vector2f Carro::obtenerDireccionDesdeArista(const Grafo& grafo, const std::string& nodoDesde, const std::string& nodoHacia) {
-    return grafo.obtenerPosicionNodo(nodoHacia) - grafo.obtenerPosicionNodo(nodoDesde);
-}
-
 void Carro::calcularRuta(const std::string& nodoInicio, const std::string& nodoDestino) {
     std::map<std::string, float> distancias;
     std::map<std::string, std::string> predecesores;
@@ -167,12 +155,13 @@ void Carro::calcularRuta(const std::string& nodoInicio, const std::string& nodoD
     }
 }
 
-void Carro::actualizarVelocidad(float nuevaVelocidad) {
-    velocidad = nuevaVelocidad;
-}
+void Carro::mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& carros) {
+    if (!colisionado) return;
 
-float Carro::getVelocidad() const {
-    return velocidad;
+    sf::CircleShape indicador(radioEspera);
+    indicador.setFillColor(sf::Color(255, 0, 0, 100));
+    indicador.setPosition(posicion.x - radioEspera, posicion.y - radioEspera);
+    window.draw(indicador);
 }
 
 bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
@@ -182,63 +171,50 @@ bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
     for (size_t i = 0; i < listaDeCarros.size(); ++i) {
         Carro* otroCarro = listaDeCarros[i];
 
-        // Ignorar el carro actual
         if (this != otroCarro) {
             float distancia = std::sqrt(
                 std::pow(this->obtenerPosicion().x - otroCarro->obtenerPosicion().x, 2) +
                 std::pow(this->obtenerPosicion().y - otroCarro->obtenerPosicion().y, 2)
             );
 
-            // Si hay colisión directa
             if (distancia < radioColision) {
-                // Verificar si ambos carros están en un nodo de semáforo
                 std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 35.0f);
                 std::string nodoOtroCarro = grafo.obtenerNodoDesdePosicion(otroCarro->obtenerPosicion(), 35.0f);
 
                 if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() &&
                     nodosSemaforos.find(nodoOtroCarro) != nodosSemaforos.end()) {
-                    // Ignorar colisión si ambos están en un nodo de semáforo
                     continue;
                 }
 
-                // Marcar ambos carros como colisionados y detenerlos
                 this->detener(10.0f);
                 otroCarro->detener(10.0f);
 
                 this->colisionado = true;
                 otroCarro->colisionado = true;
 
-                return true; // Colisión detectada
+                return true; 
             }
 
-            // Si el carro está dentro del radio de espera de otro carro colisionado
             if (otroCarro->colisionado && distancia < radioEspera) {
                 estaEnRadioDeColision = true;
             }
         }
     }
 
-    // Si está en el radio de colisión, no moverse pero no afectar a otros
     if (estaEnRadioDeColision) {
-        enEspera = true; // Marcar como en espera
+        enEspera = true; 
     } else {
-        enEspera = false; // Liberar estado de espera si no hay colisión cercana
+        enEspera = false; 
     }
 
-    return false; // No hay colisión directa
+    return false; 
 }
 
-
-
-
-void Carro::mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& listaDeCarros) {
-    bool hayColision = verificarColisiones(listaDeCarros); 
-
-    if (hayColision) {
-        colisionador.mostrarColision(window, true); 
+void Carro::actualizarVelocidad(float nuevaVelocidad) {
+    if (!colisionado) {
+        velocidad = nuevaVelocidad;
+        std::cerr << "Velocidad del carro " << nombre << " actualizada a " << velocidad << std::endl;
+    } else {
+        std::cerr << "Carro " << nombre << " no puede actualizar velocidad mientras está detenido." << std::endl;
     }
-}
-
-bool Carro::colisionDetectada() const { 
-    return colisionado; 
 }

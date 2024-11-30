@@ -12,7 +12,7 @@ include_directories(${SFML_INCLUDE_DIRS})
 
 # Incluir directorios adicionales
 include_directories(/usr/local/include)
-include_directories(src src/Ciudad src/Vehiculos src/Interfaz)
+include_directories(src src/Ciudad src/Vehiculos src/Interfaz src/Trafico)
 
 # Especificar las rutas para las bibliotecas
 link_directories(/usr/local/lib)
@@ -28,6 +28,7 @@ set(SOURCES
     src/Ciudad/Semaforo.cpp
     src/Vehiculos/Vehiculo.cpp
     src/Vehiculos/Colisionador.cpp
+    src/Trafico/ArbolSemaforos.cpp
 )
 
 # Crear el ejecutable

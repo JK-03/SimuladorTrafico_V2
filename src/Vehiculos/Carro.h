@@ -21,23 +21,23 @@ public:
 
     void dibujar(sf::RenderWindow& window);
     void calcularRuta(const std::string& nodoInicio, const std::string& nodoDestino);
-    void mover(float deltaTime, const sf::Font& font);
+    void mover(float deltaTime);
     void detener(float tiempo);
     const std::map<std::string, Nodo>& getNodosSemaforos() const; 
     void actualizarVelocidad(float nuevaVelocidad);
 
     float getVelocidad() const;
 
-    std::vector<sf::Vector2f> generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad);
+    static std::vector<sf::Vector2f> generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad);
 
     bool colisionDetectada() const;
     bool verificarColisiones(const std::vector<Carro*>& listaDeCarros);
     bool colisionado = false;
 
-    void mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& listaDeCarros);
+    void mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& carros);
 
     bool enEspera = false;
-    const float radioEspera = 50.0f; // Radio en el que los carros esperan por la colisión
+    const float radioEspera = 50.0f;
     
 private:
     Grafo& grafo; 

@@ -7,11 +7,10 @@ Grafo::Grafo() : espaciado(200.0f), filas(4), columnas(6) {
     srand(static_cast<unsigned>(time(0)));
 }
 
-void Grafo::agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, float tiempoAmarillo, float radio) {
+void Grafo::agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float radio) {
     int fila = static_cast<int>(posicion.y / espaciado);
     int columna = static_cast<int>(posicion.x / espaciado);
-    
-    nodos[nombre] = Nodo(posicion.x, posicion.y, radio, tiempoVerde, tiempoRojo, tiempoAmarillo, fila, columna);
+    nodos[nombre] = Nodo(posicion.x, posicion.y, radio, fila, columna, nombre);
 }
 
 void Grafo::agregarArista(const std::string& nodoA, const std::string& nodoB) {
@@ -25,23 +24,27 @@ bool Grafo::estaAristaLibre(const std::string& desde, const std::string& hacia) 
     return std::find(aristas.begin(), aristas.end(), std::make_pair(desde, hacia)) == aristas.end();
 }
 
+sf::Vector2f Grafo::obtenerPosicionNodo(const std::string& nombreNodo) const {
+    auto it = nodos.find(nombreNodo);
+    if (it != nodos.end()) {
+        return it->second.obtenerPosicion();
+    }
+    return sf::Vector2f(0, 0);
+}
+
 bool Grafo::estaSemaforoVerde(const std::string& nodo) const {
     auto it = nodos.find(nodo);
     if (it == nodos.end()) {
         return false;
     }
-    return it->second.obtenerSemaforo().estaVerde();
+
+    if (!it->second.getEsSemaforo()) {
+        return true; 
+    }
+
+    return static_cast<int>(it->second.obtenerTiempoTranscurrido()) % 2 == 0;
 }
 
-sf::Vector2f Grafo::obtenerPosicionNodo(const std::string& nombreNodo) const {
-    auto it = nodos.find(nombreNodo);
-    if (it != nodos.end()) {
-        sf::Vector2f posicionOriginal = it->second.obtenerPosicion();
-        return posicionOriginal;
-    } else {
-        return sf::Vector2f(0, 0);
-    }
-}
 
 int Grafo::getNumeroDeNodos() const {
     return nodos.size();
@@ -50,12 +53,12 @@ int Grafo::getNumeroDeNodos() const {
 void Grafo::actualizarSemaforos(float deltaTiempo) {
     if (deltaTiempo <= 0) return;
     for (auto& par : nodos) {
-        par.second.obtenerSemaforo().actualizar(deltaTiempo);
+        //par.second.obtenerSemaforo().actualizar(deltaTiempo);
     }
 }
 
 Semaforo& Grafo::obtenerSemaforo(const std::string& nombreNodo) {
-    return nodos[nombreNodo].obtenerSemaforo(); 
+    //return nodos[nombreNodo].obtenerSemaforo(); 
 }
 
 void Grafo::dibujar(sf::RenderWindow& window, bool mostrarEtiquetas) {
@@ -75,34 +78,11 @@ void Grafo::dibujar(sf::RenderWindow& window, bool mostrarEtiquetas) {
     }
 
     for (const auto& nodo : nodos) {
-        const auto& semaforo = nodo.second.obtenerSemaforo();
-
-        sf::Color color;
-
-        if (semaforo.estaVerde()) {
-            color = sf::Color::Green;
-        } else if (semaforo.estaRojo()) {
-            color = sf::Color::Red;
-        } else if (semaforo.estaAmarillo()) {
-            color = sf::Color(255, 255, 0);
-        } else if (semaforo.estaParpadeandoAmarillo()) {
-            if (static_cast<int>(nodo.second.obtenerSemaforo().obtenerReloj().getElapsedTime().asSeconds()) % 2 == 0) {
-                color = sf::Color(255, 255, 0, 255);
-            } else {
-                color = sf::Color(255, 255, 0, 50);
-            }
-        } else {
-            color = sf::Color::White;
-        }
-
-        sf::CircleShape shape(10);
-        shape.setPosition(nodo.second.obtenerPosicion().x - 10, nodo.second.obtenerPosicion().y - 10); 
-        shape.setFillColor(color);
-        window.draw(shape);
+        nodo.second.dibujar(window);  
 
         if (mostrarEtiquetas) {
             sf::Text text(nodo.first, font, 15);
-            text.setPosition(nodo.second.obtenerPosicion().x - 10, nodo.second.obtenerPosicion().y - 25);
+            text.setPosition(nodo.second.obtenerPosicion().x - 10, nodo.second.obtenerPosicion().y - 40);
             text.setFillColor(sf::Color::Black);
             window.draw(text);
         }
@@ -120,7 +100,7 @@ void Grafo::agregarNodosSecuenciales(float espaciado, const sf::FloatRect& areaV
         sf::Vector2f posicion(x, y);
         std::string nombre = "S_" + std::to_string(fila + 1) + "_" + std::to_string(columna + 1);
 
-        agregarNodo(nombre, posicion, 50.0f, 10.0f, 10.0f, 15.0f);
+        agregarNodo(nombre, posicion, 10.0f);
         agregarAristasSecuenciales();
 
         nodoCount++;
@@ -248,4 +228,39 @@ float Grafo::getPeso(const std::string& desde, const std::string& hacia) const {
 
 void Grafo::setInterfaz(Interfaz* interfaz) {
     this->interfaz = interfaz; 
+}
+
+Nodo* Grafo::obtenerNodoAlAzar() {
+    std::vector<Nodo*> nodosVec;
+    for (auto& par : nodos) {
+        nodosVec.push_back(&par.second); 
+    }
+
+    int index = rand() % nodosVec.size();  
+    return nodosVec[index];
+}
+
+std::vector<Nodo*> Grafo::obtenerConexionesDeNodo(Nodo* nodo) {
+    std::vector<Nodo*> conexiones;
+    
+    std::string nombreNodo = ""; 
+    for (const auto& par : nodos) {
+        if (&par.second == nodo) { 
+            nombreNodo = par.first; 
+            break;
+        }
+    }
+
+    if (nombreNodo.empty()) {
+        return conexiones;  
+    }
+
+    for (const auto& arista : aristas) {
+        if (arista.first == nombreNodo) {
+            conexiones.push_back(&nodos.at(arista.second)); 
+        } else if (arista.second == nombreNodo) {
+            conexiones.push_back(&nodos.at(arista.first)); 
+        }
+    }
+    return conexiones;
 }

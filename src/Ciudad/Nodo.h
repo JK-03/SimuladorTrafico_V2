@@ -7,7 +7,7 @@
 class Nodo {
 public:
     Nodo();
-    Nodo(float posX, float posY, float radio, float tiempoVerde, float tiempoRojo, float tiempoAmarillo, int fila, int columna);
+    Nodo(float posX, float posY, float radio, int fila, int columna, const std::string& nombre);
 
     const sf::Vector2f& obtenerPosicion() const;
     void setPosicion(const sf::Vector2f& nuevaPosicion);
@@ -15,21 +15,29 @@ public:
     float obtenerRadio() const;
     void setRadio(float nuevoRadio);
 
-    Semaforo& obtenerSemaforo();
-    const Semaforo& obtenerSemaforo() const;
-
     int obtenerFila() const;
     int obtenerColumna() const;
 
     void dibujar(sf::RenderWindow& ventana) const;
 
+    void setEsSemaforo(bool valor);
+    bool getEsSemaforo() const;
+
+    float obtenerTiempoTranscurrido() const;
+    void asignarSemaforo(Semaforo* semaforo);
+
+    std::string obtenerNombre() const;
+
 private:
+    Semaforo* semaforo; 
+
+    std::string nombre;
     float radio;
-    Semaforo semaforo;
     int fila;
     int columna;
     sf::Vector2f posicion;
-    mutable sf::Clock reloj; 
+    mutable sf::Clock reloj;
+    bool esSemaforo; 
 };
 
 #endif // NODO_H

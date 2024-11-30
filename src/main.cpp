@@ -18,9 +18,7 @@ void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, con
 
     grafo.dibujar(window, mostrarEtiquetas);  
 
-    for (const auto& par : grafo.obtenerNodos()) {
-        par.second.dibujar(window);
-    }
+    interfaz.dibujarSemaforos(window); 
 
     for (const auto& carro : vehiculos) {
         carro->dibujar(window);
@@ -32,7 +30,7 @@ void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, con
 
 void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime, const sf::Font& font) {
     for (auto& carro : vehiculos) {
-        carro->mover(deltaTime, font);
+        carro->mover(deltaTime);
     }
 }
 
@@ -49,6 +47,8 @@ int main() {
 
     sf::Font font;
     if (!font.loadFromFile("../Resources/Roboto-BoldCondensed.ttf")) {
+        std::cerr << "Error cargando la fuente.\n";
+        return -1;
     }
 
     Grafo grafo;
@@ -69,7 +69,7 @@ int main() {
         }
 
         float deltaTime = clock.restart().asSeconds(); 
-        grafo.actualizarSemaforos(deltaTime);
+        interfaz.actualizarSemaforos(deltaTime); 
         moverCarros(interfaz.obtenerVehiculos(), deltaTime, font);
         verificarColisiones(interfaz.obtenerVehiculos());
         dibujarTodo(window, grafo, interfaz, interfaz.obtenerVehiculos(), interfaz.isMostrarEtiquetas());

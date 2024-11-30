@@ -16,8 +16,8 @@ class Grafo {
     public:
         Grafo(); 
 
-        void agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float tiempoVerde, float tiempoRojo, float tiempoAmarillo, float radio);
-        void agregarArista(const std::string& n1, const std::string& n2);
+        void agregarNodo(const std::string& nombre, const sf::Vector2f& posicion, float radio);
+        void agregarArista(const std::string& nodoA, const std::string& nodoB);
 
         void agregarNodosSecuenciales(float espaciado, const sf::FloatRect& areaValida, const sf::Vector2f& primeraPosicion);
         void agregarAristasSecuenciales();
@@ -37,6 +37,7 @@ class Grafo {
         std::vector<std::string> obtenerSemaforosConectados(const std::string& nombreNodo);
         std::vector<std::string> obtenerNodosConectados(const std::string& nombreNodo) const;
         std::vector<std::pair<const std::string, Nodo>> getNodos() const;
+        std::vector<Nodo*> obtenerConexionesDeNodo(Nodo* nodo);
         
         std::unordered_map<std::string, Nodo> obtenerNodos() const;
         std::map<std::string, Nodo> getNodosSemaforos() const;
@@ -46,9 +47,10 @@ class Grafo {
         float getPeso(const std::string& desde, const std::string& hacia) const;
 
         void depurarNodos() const;
-
         void setInterfaz(Interfaz* interfaz);
-        
+
+        Nodo* obtenerNodoAlAzar();
+
     private:
         std::map<std::string, Nodo> nodos;
         std::vector<std::pair<std::string, std::string>> aristas;
