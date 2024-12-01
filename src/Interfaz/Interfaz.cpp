@@ -23,49 +23,64 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         });
 
     botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 560), [this, &grafo]() {
-        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
-        sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
-        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
+    Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+    sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
+    std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
 
-        if (!conexiones.empty()) {
-            static std::set<std::pair<Nodo*, Nodo*>> conexionesUsadas;
-            Nodo* nodoConectado = nullptr;
-            
-            std::random_device rd;
-            std::mt19937 g(rd());
-            std::shuffle(conexiones.begin(), conexiones.end(), g);
+    if (!conexiones.empty()) {
+        static std::set<std::pair<Nodo*, Nodo*>> conexionesUsadas;
+        Nodo* nodoConectado = nullptr;
+        
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(conexiones.begin(), conexiones.end(), g);
 
-            for (Nodo* nodoCandidato : conexiones) {
-                if (conexionesUsadas.find({nodoRelacionado, nodoCandidato}) == conexionesUsadas.end() &&
-                    conexionesUsadas.find({nodoCandidato, nodoRelacionado}) == conexionesUsadas.end()) {
+        for (Nodo* nodoCandidato : conexiones) {
+            if (conexionesUsadas.find({nodoRelacionado, nodoCandidato}) == conexionesUsadas.end() &&
+                conexionesUsadas.find({nodoCandidato, nodoRelacionado}) == conexionesUsadas.end()) {
 
-                    nodoConectado = nodoCandidato;
-                    break;
-                }
-            }
-
-            if (nodoConectado != nullptr) {
-                conexionesUsadas.insert({nodoRelacionado, nodoConectado});
-                conexionesUsadas.insert({nodoConectado, nodoRelacionado});
-
-                sf::Vector2f posicionConectada = nodoConectado->obtenerPosicion();
-                float direccionX = posicionConectada.x - posicionNodo.x;
-                float direccionY = posicionConectada.y - posicionNodo.y;
-
-                float longitud = std::sqrt(direccionX * direccionX + direccionY * direccionY);
-                direccionX /= longitud; 
-                direccionY /= longitud; 
-
-                float distancia = 25.0f;
-                float semaforoX = posicionNodo.x + direccionX * distancia;
-                float semaforoY = posicionNodo.y + direccionY * distancia;
-
-                Semaforo* nuevoSemaforo = new Semaforo(30.f, 20.f, 20.f, 20.f, sf::Vector2f(semaforoX, semaforoY), 30.0f);
-                nodoRelacionado->asignarSemaforo(nuevoSemaforo);
-                arbolSemaforos.insertar(nuevoSemaforo, nodoRelacionado, nodoConectado);
+                nodoConectado = nodoCandidato;
+                break;
             }
         }
-    });
+
+        if (nodoConectado != nullptr) {
+            conexionesUsadas.insert({nodoRelacionado, nodoConectado});
+            conexionesUsadas.insert({nodoConectado, nodoRelacionado});
+
+            // Cálculo de la posición del semáforo
+            sf::Vector2f posicionConectada = nodoConectado->obtenerPosicion();
+            float direccionX = posicionConectada.x - posicionNodo.x;
+            float direccionY = posicionConectada.y - posicionNodo.y;
+
+            float longitud = std::sqrt(direccionX * direccionX + direccionY * direccionY);
+            direccionX /= longitud; 
+            direccionY /= longitud; 
+
+            float distancia = 25.0f;
+            float semaforoX = posicionNodo.x + direccionX * distancia;
+            float semaforoY = posicionNodo.y + direccionY * distancia;
+
+            // Crear el semáforo
+            Semaforo* nuevoSemaforo = new Semaforo(30.f, 20.f, 20.f, 20.f, sf::Vector2f(semaforoX, semaforoY), 30.0f);
+            
+            // Asignar semáforo al nodo relacionado
+            nodoRelacionado->asignarSemaforo(nuevoSemaforo);
+
+            // Insertar el semáforo en el árbol
+            arbolSemaforos.insertar(nuevoSemaforo, nodoRelacionado, nodoConectado);
+            
+            // Si quieres verificar que el semáforo no esté duplicado, puedes usar arbolSemaforos.existeSemaforoEnPosicion
+            if (!arbolSemaforos.existeSemaforoEnPosicion(arbolSemaforos.obtenerRaiz(), sf::Vector2f(semaforoX, semaforoY), 5.0f)) {
+                // Si no existe semáforo, puedes agregarlo
+                std::cout << "Semáforo agregado en la posición: (" << semaforoX << ", " << semaforoY << ")\n";
+            } else {
+                std::cout << "Ya existe un semáforo en esta posición, no se agrega.\n";
+            }
+        }
+    }
+});
+
 
     botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 270), [this, &grafo]() {
         static int index = 0;

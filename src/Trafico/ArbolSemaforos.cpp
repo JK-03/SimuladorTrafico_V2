@@ -92,3 +92,7 @@ bool ArbolSemaforos::existeSemaforoEnPosicion(NodoArbol* nodo, const sf::Vector2
     return existeSemaforoEnPosicion(nodo->izquierdo, posicion, tolerancia) ||
            existeSemaforoEnPosicion(nodo->derecho, posicion, tolerancia);
 }
+
+NodoArbol* ArbolSemaforos::obtenerRaiz() {
+    return raiz;
+}

@@ -36,6 +36,8 @@ public:
 
     std::unordered_map<Nodo*, Semaforo*> semaforosPorConexion;
 
+    Semaforo* obtenerSemaforo() const;
+
 private:
     Semaforo* semaforo; 
     std::map<Nodo*, Semaforo*> semaforosConexiones; 

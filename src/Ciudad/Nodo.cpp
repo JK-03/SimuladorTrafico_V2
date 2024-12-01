@@ -77,3 +77,7 @@ void Nodo::agregarSemaforoConexion(Nodo* nodoConectado, Semaforo* semaforo) {
         semaforosConexiones[nodoConectado] = semaforo;
     }
 }
+
+Semaforo* Nodo::obtenerSemaforo() const {
+    return semaforo;
+}

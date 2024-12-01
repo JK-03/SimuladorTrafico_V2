@@ -17,7 +17,8 @@ public:
 
     bool existeSemaforoEnPosicion(NodoArbol* nodo, const sf::Vector2f& posicion, float tolerancia) const;
 
-
+    NodoArbol* obtenerRaiz();
+    
 private:
     NodoArbol* raiz;
     void insertarAux(NodoArbol*& nodo, Semaforo* semaforo, Nodo* nodo1, Nodo* nodo2);
