@@ -29,6 +29,18 @@ Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velo
 }
 
 void Carro::mover(float deltaTime) {
+    if (colisionado) {
+        tiempoDetenido -= deltaTime;
+        if (tiempoDetenido <= 0) {
+            colisionado = false;
+        }
+        return;
+    }
+
+    if (enEspera) {
+        return;
+    }
+
     if (ruta.size() < 2) {
         return;
     }
@@ -36,23 +48,42 @@ void Carro::mover(float deltaTime) {
     sf::Vector2f posicionActual = ruta.front();
     sf::Vector2f posicionSiguiente = ruta[1];
 
+    bool esVertical = std::abs(posicionSiguiente.x - posicionActual.x) < std::numeric_limits<float>::epsilon();
+    bool esHorizontal = std::abs(posicionSiguiente.y - posicionActual.y) < std::numeric_limits<float>::epsilon();
+
+    if (esVertical) {
+        if (posicionSiguiente.y > posicionActual.y) {
+            posicionActual.x -= tamanoCuadro / 4.0f;
+            posicionSiguiente.x -= tamanoCuadro / 4.0f;
+        } else {
+            posicionActual.x += tamanoCuadro / 4.0f;
+            posicionSiguiente.x += tamanoCuadro / 4.0f;
+        }
+    } else if (esHorizontal) {
+        if (posicionSiguiente.x > posicionActual.x) {
+            posicionActual.y += tamanoCuadro / 4.0f;
+            posicionSiguiente.y += tamanoCuadro / 4.0f;
+        } else {
+            posicionActual.y -= tamanoCuadro / 4.0f;
+            posicionSiguiente.y -= tamanoCuadro / 4.0f;
+        }
+    }
+
     sf::Vector2f direccion = posicionSiguiente - posicionActual;
     float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
 
     if (distanciaTotal > 0) {
-        direccion /= distanciaTotal; // Normalizamos la dirección
+        direccion /= distanciaTotal;
     }
 
     sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
 
-    // Verificar si ya llegamos al siguiente nodo
     float distanciaRecorrida = std::sqrt(
         (nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
         (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)
     );
 
     if (distanciaRecorrida >= distanciaTotal) {
-        // Si llegamos al siguiente nodo, eliminamos el nodo actual
         ruta.erase(ruta.begin());
         if (!ruta.empty()) {
             posicion = ruta.front();
@@ -61,10 +92,8 @@ void Carro::mover(float deltaTime) {
         posicion = nuevaPosicion;
     }
 
-    sprite.setPosition(posicion); // Actualizamos la posición del sprite
+    sprite.setPosition(posicion);
 }
-
-
 
 std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad) {
     std::vector<sf::Vector2f> ruta;

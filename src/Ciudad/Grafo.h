@@ -37,7 +37,7 @@ class Grafo {
         std::vector<std::string> obtenerSemaforosConectados(const std::string& nombreNodo);
         std::vector<std::string> obtenerNodosConectados(const std::string& nombreNodo) const;
         std::vector<std::pair<const std::string, Nodo>> getNodos() const;
-        std::vector<Nodo*> obtenerConexionesDeNodo(Nodo* nodo);
+        std::vector<Nodo*> obtenerConexionesDeNodo(const Nodo* nodo);
         
         std::unordered_map<std::string, Nodo> obtenerNodos() const;
         std::map<std::string, Nodo> getNodosSemaforos() const;

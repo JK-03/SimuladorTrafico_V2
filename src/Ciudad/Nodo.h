@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Semaforo.h"
+#include <map>
 
 class Nodo {
 public:
@@ -28,8 +29,16 @@ public:
 
     std::string obtenerNombre() const;
 
+    Semaforo* getSemaforo() const;
+
+    bool tieneSemaforoEnConexion(const Nodo* nodoConectado) const;
+    void agregarSemaforoConexion(Nodo* nodoConectado, Semaforo* semaforo);
+
+    std::unordered_map<Nodo*, Semaforo*> semaforosPorConexion;
+
 private:
     Semaforo* semaforo; 
+    std::map<Nodo*, Semaforo*> semaforosConexiones; 
 
     std::string nombre;
     float radio;

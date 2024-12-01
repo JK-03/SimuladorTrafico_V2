@@ -6,6 +6,10 @@
 #include <cmath>
 #include <ctime>
 #include <iomanip>
+#include <utility>
+#include <set>
+#include <algorithm>
+#include <random>
 #include <sstream>
 
 Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
@@ -21,45 +25,45 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 560), [this, &grafo]() {
         Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
         sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
-
         std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
-        
+
         if (!conexiones.empty()) {
-            Nodo* nodoConectado = conexiones[0];
-            sf::Vector2f posicionConectada = nodoConectado->obtenerPosicion();
+            static std::set<std::pair<Nodo*, Nodo*>> conexionesUsadas;
+            Nodo* nodoConectado = nullptr;
+            
+            std::random_device rd;
+            std::mt19937 g(rd());
+            std::shuffle(conexiones.begin(), conexiones.end(), g);
 
-            float direccionX = posicionConectada.x - posicionNodo.x;
-            float direccionY = posicionConectada.y - posicionNodo.y;
+            for (Nodo* nodoCandidato : conexiones) {
+                if (conexionesUsadas.find({nodoRelacionado, nodoCandidato}) == conexionesUsadas.end() &&
+                    conexionesUsadas.find({nodoCandidato, nodoRelacionado}) == conexionesUsadas.end()) {
 
-            float longitud = std::sqrt(direccionX * direccionX + direccionY * direccionY);
-            direccionX /= longitud; 
-            direccionY /= longitud; 
-
-            float distancia = 25.0f;
-            float semaforoX, semaforoY;
-
-            if (std::abs(direccionX) > std::abs(direccionY)) {  
-                if (direccionX > 0) {
-                    semaforoX = posicionNodo.x + direccionX * distancia; 
-                } else {
-                    semaforoX = posicionNodo.x + direccionX * distancia;  
-                }
-                semaforoY = posicionNodo.y; 
-            } else { 
-                if (direccionY > 0) {
-                    semaforoX = posicionNodo.x; 
-                    semaforoY = posicionNodo.y + direccionY * distancia;  
-                } else {
-                    semaforoX = posicionNodo.x; 
-                    semaforoY = posicionNodo.y + direccionY * distancia;  
+                    nodoConectado = nodoCandidato;
+                    break;
                 }
             }
 
-            Semaforo* nuevoSemaforo = new Semaforo(30.f, 20.f, 20.f, 20.f, sf::Vector2f(semaforoX, semaforoY), 30.0f);
-            nodoRelacionado->asignarSemaforo(nuevoSemaforo);
-            arbolSemaforos.insertar(nuevoSemaforo, nodoRelacionado, nodoConectado);
-        } else {
-            std::cout << "El nodo no tiene conexiones." << std::endl;
+            if (nodoConectado != nullptr) {
+                conexionesUsadas.insert({nodoRelacionado, nodoConectado});
+                conexionesUsadas.insert({nodoConectado, nodoRelacionado});
+
+                sf::Vector2f posicionConectada = nodoConectado->obtenerPosicion();
+                float direccionX = posicionConectada.x - posicionNodo.x;
+                float direccionY = posicionConectada.y - posicionNodo.y;
+
+                float longitud = std::sqrt(direccionX * direccionX + direccionY * direccionY);
+                direccionX /= longitud; 
+                direccionY /= longitud; 
+
+                float distancia = 25.0f;
+                float semaforoX = posicionNodo.x + direccionX * distancia;
+                float semaforoY = posicionNodo.y + direccionY * distancia;
+
+                Semaforo* nuevoSemaforo = new Semaforo(30.f, 20.f, 20.f, 20.f, sf::Vector2f(semaforoX, semaforoY), 30.0f);
+                nodoRelacionado->asignarSemaforo(nuevoSemaforo);
+                arbolSemaforos.insertar(nuevoSemaforo, nodoRelacionado, nodoConectado);
+            }
         }
     });
 
@@ -67,16 +71,13 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         static int index = 0;
 
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
-        std::vector<std::string> nodosDisponibles = grafo.obtenerNodosConectados(nodoInicio);
         sf::Vector2f posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
-
-        std::vector<sf::Vector2f> rutaCiclica;
-        Carro carro("Carro_" + std::to_string(index), posicionNodo, 50.0f, grafo, "../Resources/Carro.png", rutaCiclica, grafo.getNodosSemaforos());
 
         bool posicionValida = true;
         for (auto& carro : vehiculos) {
-            if (std::sqrt(std::pow(carro->obtenerPosicion().x - posicionNodo.x, 2) + std::pow(carro->obtenerPosicion().y - posicionNodo.y, 2)) < 50) {
-                posicionValida = false; 
+            if (std::sqrt(std::pow(carro->obtenerPosicion().x - posicionNodo.x, 2) + 
+                        std::pow(carro->obtenerPosicion().y - posicionNodo.y, 2)) < 50) {
+                posicionValida = false;
                 break;
             }
         }
@@ -86,13 +87,35 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
             posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
         }
 
-        rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
-        
-        sf::Vector2f nuevaPosicionNodo = posicionNodo;
-        
+        Carro carro("Carro_" + std::to_string(index), posicionNodo, 50.0f, grafo, "../Resources/Carro.png", {}, grafo.getNodosSemaforos());
+        std::vector<sf::Vector2f> rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
+
+        for (size_t i = 0; i < rutaCiclica.size() - 1; ++i) {
+            sf::Vector2f& nodoActual = rutaCiclica[i];
+            sf::Vector2f& nodoSiguiente = rutaCiclica[i + 1];
+
+            if (std::abs(nodoSiguiente.x - nodoActual.x) < std::numeric_limits<float>::epsilon()) {
+                if (nodoSiguiente.y > nodoActual.y) {
+                    nodoActual.x -= 45.0f;
+                    nodoSiguiente.x -= 45.0f;
+                } else {
+                    nodoActual.x += 5.0f;
+                    nodoSiguiente.x += 5.0f;
+                }
+            } else if (std::abs(nodoSiguiente.y - nodoActual.y) < std::numeric_limits<float>::epsilon()) {
+                if (nodoSiguiente.x > nodoActual.x) {
+                    nodoActual.y += 5.0f;
+                    nodoSiguiente.y += 5.0f;
+                } else {
+                    nodoActual.y -= 30.0f;
+                    nodoSiguiente.y -= 30.0f;
+                }
+            }
+        }
+
         Carro* nuevoCarro = new Carro(
             "Carro_" + std::to_string(index),
-            nuevaPosicionNodo,
+            posicionNodo,
             5.0f,
             grafo,
             "../Resources/Carro.png",
@@ -103,7 +126,6 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         vehiculos.push_back(nuevoCarro);
         index++;
     });
-
 
     botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 440), [this]() {
         toggleMostrarEtiquetas(); 

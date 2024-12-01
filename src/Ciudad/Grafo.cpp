@@ -2,6 +2,8 @@
 #include <unordered_map>
 #include <iostream>
 #include <cmath>
+#include <random>
+#include <unordered_set>
 
 Grafo::Grafo() : espaciado(200.0f), filas(4), columnas(6) { 
     srand(static_cast<unsigned>(time(0)));
@@ -51,9 +53,18 @@ int Grafo::getNumeroDeNodos() const {
 }
 
 void Grafo::actualizarSemaforos(float deltaTiempo) {
-    if (deltaTiempo <= 0) return;
-    for (auto& par : nodos) {
-        //par.second.obtenerSemaforo().actualizar(deltaTiempo);
+    for (const auto& par : nodos) {
+        const Nodo* nodo = &par.second; 
+        
+        std::vector<Nodo*> conexiones = obtenerConexionesDeNodo(nodo);
+
+        for (Nodo* conexion : conexiones) {
+            auto it = nodo->semaforosPorConexion.find(conexion);
+            if (it != nodo->semaforosPorConexion.end()) {
+                Semaforo* semaforo = it->second;
+                semaforo->actualizar(deltaTiempo);  
+            }
+        }
     }
 }
 
@@ -236,12 +247,18 @@ Nodo* Grafo::obtenerNodoAlAzar() {
         nodosVec.push_back(&par.second); 
     }
 
-    int index = rand() % nodosVec.size();  
+    std::random_device rd;
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> distrib(0, nodosVec.size() - 1); 
+
+    int index = distrib(gen); 
     return nodosVec[index];
 }
 
-std::vector<Nodo*> Grafo::obtenerConexionesDeNodo(Nodo* nodo) {
-    std::vector<Nodo*> conexiones;
+
+std::vector<Nodo*> Grafo::obtenerConexionesDeNodo(const Nodo* nodo) {
+    std::unordered_set<Nodo*> conexionesUnicas;
+    std::vector<Nodo*> conexiones; 
     
     std::string nombreNodo = ""; 
     for (const auto& par : nodos) {
@@ -257,10 +274,15 @@ std::vector<Nodo*> Grafo::obtenerConexionesDeNodo(Nodo* nodo) {
 
     for (const auto& arista : aristas) {
         if (arista.first == nombreNodo) {
-            conexiones.push_back(&nodos.at(arista.second)); 
+            conexionesUnicas.insert(&nodos.at(arista.second)); 
         } else if (arista.second == nombreNodo) {
-            conexiones.push_back(&nodos.at(arista.first)); 
+            conexionesUnicas.insert(&nodos.at(arista.first)); 
         }
     }
+
+    for (Nodo* conexion : conexionesUnicas) {
+        conexiones.push_back(conexion);
+    }
+
     return conexiones;
 }

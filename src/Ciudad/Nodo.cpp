@@ -1,4 +1,5 @@
 #include "Nodo.h"
+#include <cmath>
 
 Nodo::Nodo() : posicion(0, 0), radio(15.0f), fila(0), columna(0), esSemaforo(false) {}
 
@@ -34,7 +35,7 @@ void Nodo::dibujar(sf::RenderWindow& ventana) const {
     circulo.setPosition(posicion.x - radio, posicion.y - radio);
 
     if (esSemaforo) {
-        circulo.setFillColor(sf::Color::Red); 
+        circulo.setFillColor(sf::Color::Red);
     } else {
         circulo.setFillColor(sf::Color::Black);
     }
@@ -60,4 +61,19 @@ void Nodo::asignarSemaforo(Semaforo* semaforo) {
 
 std::string Nodo::obtenerNombre() const {
     return nombre;
+}
+
+Semaforo* Nodo::getSemaforo() const {
+    return semaforo; 
+}
+
+bool Nodo::tieneSemaforoEnConexion(const Nodo* nodoConectado) const {
+    auto it = semaforosConexiones.find(const_cast<Nodo*>(nodoConectado));
+    return it != semaforosConexiones.end();
+}
+
+void Nodo::agregarSemaforoConexion(Nodo* nodoConectado, Semaforo* semaforo) {
+    if (semaforosConexiones.find(nodoConectado) == semaforosConexiones.end()) {
+        semaforosConexiones[nodoConectado] = semaforo;
+    }
 }
