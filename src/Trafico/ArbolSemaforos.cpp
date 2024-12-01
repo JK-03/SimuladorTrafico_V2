@@ -5,7 +5,12 @@
 #include <cmath>
 
 void ArbolSemaforos::insertar(Semaforo* semaforo, Nodo* nodo1, Nodo* nodo2) {
-    insertarAux(raiz, semaforo, nodo1, nodo2);
+    if (raiz == nullptr) {
+        raiz = new NodoArbol(semaforo);
+        insertarAux(raiz, semaforo, nodo1, nodo2);
+    } else {
+        insertarAux(raiz, semaforo, nodo1, nodo2);
+    }
 }
 
 void ArbolSemaforos::insertarAux(NodoArbol*& nodo, Semaforo* semaforo, Nodo* nodo1, Nodo* nodo2) {
@@ -23,17 +28,18 @@ void ArbolSemaforos::insertarAux(NodoArbol*& nodo, Semaforo* semaforo, Nodo* nod
         nodo1->obtenerPosicion().y + direccionY * distancia
     );
 
+    std::cout << "Intentando insertar semáforo en la posición calculada: (" 
+              << posicionSemaforo.x << ", " << posicionSemaforo.y << ")" << std::endl;
+
     if (nodo1->tieneSemaforoEnConexion(nodo2)) {
+        std::cout << "Ya existe un semáforo en la conexión." << std::endl;
         return;
     }
 
     if (nodo == nullptr) {
         semaforo->setPosicion(posicionSemaforo.x, posicionSemaforo.y);
         nodo = new NodoArbol(semaforo);
-
         nodo1->agregarSemaforoConexion(nodo2, semaforo);
-        std::cout << "Semáforo agregado en la posición: (" 
-                  << posicionSemaforo.x << ", " << posicionSemaforo.y << ")\n";
     } else {
         if (direccionX > 0 && direccionY == 0) {
             insertarAux(nodo->derecho, semaforo, nodo1, nodo2);
@@ -81,6 +87,8 @@ void ArbolSemaforos::actualizarRecursivo(NodoArbol* nodo, float deltaTime) {
 bool ArbolSemaforos::existeSemaforoEnPosicion(NodoArbol* nodo, const sf::Vector2f& posicion, float tolerancia) const {
     if (nodo == nullptr) return false;
 
+    if (nodo->semaforo == nullptr) return false;
+
     float distanciaX = nodo->semaforo->obtenerPosicion().x - posicion.x;
     float distanciaY = nodo->semaforo->obtenerPosicion().y - posicion.y;
     float distancia = std::sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
@@ -95,4 +103,27 @@ bool ArbolSemaforos::existeSemaforoEnPosicion(NodoArbol* nodo, const sf::Vector2
 
 NodoArbol* ArbolSemaforos::obtenerRaiz() {
     return raiz;
+}
+
+NodoArbol* ArbolSemaforos::buscarSemaforoCercano(const sf::Vector2f& posicionCarro, float radioDeteccion) {
+    return buscarAux(raiz, posicionCarro, radioDeteccion);
+}
+
+NodoArbol* ArbolSemaforos::buscarAux(NodoArbol* nodo, const sf::Vector2f& posicionCarro, float radioDeteccion) {
+    if (nodo == nullptr) return nullptr;
+
+    if (nodo->semaforo == nullptr) return nullptr;
+
+    float distanciaX = nodo->semaforo->obtenerPosicion().x - posicionCarro.x;
+    float distanciaY = nodo->semaforo->obtenerPosicion().y - posicionCarro.y;
+    float distancia = std::sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+
+    if (distancia <= radioDeteccion) {
+        return nodo;
+    }
+
+    NodoArbol* semaforoIzquierda = buscarAux(nodo->izquierdo, posicionCarro, radioDeteccion);
+    if (semaforoIzquierda) return semaforoIzquierda;
+
+    return buscarAux(nodo->derecho, posicionCarro, radioDeteccion);
 }

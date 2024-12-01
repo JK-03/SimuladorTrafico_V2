@@ -28,7 +28,7 @@ void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, con
     window.display();  
 }
 
-void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime, const sf::Font& font) {
+void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime) {
     for (auto& carro : vehiculos) {
         carro->mover(deltaTime);
     }
@@ -70,7 +70,7 @@ int main() {
 
         float deltaTime = clock.restart().asSeconds(); 
         interfaz.actualizarSemaforos(deltaTime); 
-        moverCarros(interfaz.obtenerVehiculos(), deltaTime, font);
+        moverCarros(interfaz.obtenerVehiculos(), deltaTime);
         verificarColisiones(interfaz.obtenerVehiculos());
         dibujarTodo(window, grafo, interfaz, interfaz.obtenerVehiculos(), interfaz.isMostrarEtiquetas());
     }

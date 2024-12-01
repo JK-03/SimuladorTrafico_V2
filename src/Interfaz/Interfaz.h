@@ -25,9 +25,9 @@ public:
     void cambiarClima();
     void dibujarSemaforos(sf::RenderWindow& window);
     void actualizarSemaforos(float deltaTime);
+    void mostrarMensajeTemporal();
 
     bool isMostrarEtiquetas() const;
-    void mostrarMensajeTemporal();
     bool getMostrarMensajeLimite() const;
 
     void toggleMostrarEtiquetas();
@@ -35,13 +35,18 @@ public:
 
     bool agregarNodoActivo = false; 
     bool mostrarMensajeLimite = false;
-
-    
     
     ~Interfaz();
 
+    std::unordered_map<Nodo*, Semaforo*> obtenerMapaSemaforos() const;
+    ArbolSemaforos* obtenerArbolSemaforos();
+
+    float obtenerVelocidadClima() const; 
+
 private:
-    ArbolSemaforos arbolSemaforos;
+    ArbolSemaforos* arbolSemaforos;
+
+    std::unordered_map<Nodo*, Semaforo*> mapaSemaforos;
 
     sf::Font font;
     sf::Clock relojMensaje;
@@ -65,7 +70,6 @@ private:
 
     std::string obtenerNombreClima(Clima clima);
     void actualizarVelocidadesDeVehiculos();
-
 };
 
 #endif // INTERFAZ_H

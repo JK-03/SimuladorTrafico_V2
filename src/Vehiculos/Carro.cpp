@@ -15,7 +15,7 @@ Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velo
       grafo(grafo), 
       ruta(ruta),
       nodosSemaforos(nodosSemaforos), 
-      velocidad(10.0f),
+      velocidad(15.0f),
       tamanoCuadro(tamanoCuadro)
 {
     sprite.setTexture(textura);
@@ -45,6 +45,12 @@ void Carro::mover(float deltaTime) {
         return;
     }
 
+    verificarSemaforos(arbolSemaforos);
+    
+    if (colisionado) {
+        return;
+    }
+
     sf::Vector2f posicionActual = ruta.front();
     sf::Vector2f posicionSiguiente = ruta[1];
 
@@ -71,7 +77,6 @@ void Carro::mover(float deltaTime) {
 
     sf::Vector2f direccion = posicionSiguiente - posicionActual;
     float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
-
     if (distanciaTotal > 0) {
         direccion /= distanciaTotal;
     }
@@ -242,8 +247,39 @@ bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
 void Carro::actualizarVelocidad(float nuevaVelocidad) {
     if (!colisionado) {
         velocidad = nuevaVelocidad;
-        std::cerr << "Velocidad del carro " << nombre << " actualizada a " << velocidad << std::endl;
-    } else {
-        std::cerr << "Carro " << nombre << " no puede actualizar velocidad mientras está detenido." << std::endl;
+    } 
+}
+
+void Carro::verificarSemaforos(ArbolSemaforos* arbolSemaforos) {
+    if (arbolSemaforos == nullptr) {
+        return; 
     }
+
+    NodoArbol* semaforoCercano = arbolSemaforos->buscarSemaforoCercano(posicion, 30.0f);
+    
+    if (semaforoCercano) {
+        if (semaforoCercano->semaforo->estaRojo()) {
+            enEspera = true;
+            detener(0.0f);
+        } else {
+            enEspera = false;
+            velocidad = 15.0f;
+        }
+    }
+}
+
+bool Carro::dentroDelRadio(Semaforo* semaforo, float radioDeteccion) {
+    if (semaforo == nullptr) {
+        return false;  
+    }
+
+    float distanciaX = semaforo->obtenerPosicion().x - this->posicion.x;
+    float distanciaY = semaforo->obtenerPosicion().y - this->posicion.y;
+    float distancia = std::sqrt(distanciaX * distanciaX + distanciaY * distanciaY);
+    
+    return distancia <= radioDeteccion;
+}
+
+void Carro::cargarSemaforos(ArbolSemaforos* arbol) {
+    arbolSemaforos = arbol; 
 }

@@ -2,6 +2,7 @@
 #define CARRO_H
 
 #include "Colisionador.h"
+#include "Interfaz.h" 
 
 class Grafo;
 class Interfaz; 
@@ -10,8 +11,8 @@ class Nodo;
 #include "Ciudad/Grafo.h"
 #include "Vehiculo.h"
 #include <vector>
-#include "Interfaz.h"
 #include "Semaforo.h"
+#include "ArbolSemaforos.h"
 
 class Carro : public Vehiculo {
 public:
@@ -25,6 +26,9 @@ public:
     void detener(float tiempo);
     const std::map<std::string, Nodo>& getNodosSemaforos() const; 
     void actualizarVelocidad(float nuevaVelocidad);
+    void mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& carros);
+    void cargarSemaforos(ArbolSemaforos* arbolSemaforos); 
+    void continuarMovimiento(); 
 
     float getVelocidad() const;
 
@@ -33,14 +37,14 @@ public:
     bool colisionDetectada() const;
     bool verificarColisiones(const std::vector<Carro*>& listaDeCarros);
     bool colisionado = false;
-
-    void mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& carros);
-
     bool enEspera = false;
+
     const float radioEspera = 50.0f;
+
+    void verificarSemaforos(ArbolSemaforos* arbolSemaforos);
+    bool dentroDelRadio(Semaforo* semaforo, float radioDeteccion);
     
 private:
-    Grafo& grafo; 
     float tamanoCuadro;
     std::vector<sf::Vector2f> ruta;
     std::map<std::string, Nodo> nodosSemaforos;
@@ -48,7 +52,9 @@ private:
     float tiempoDetenido = 0;
     float velocidad;
 
+    Grafo& grafo; 
     Colisionador colisionador;
+    ArbolSemaforos* arbolSemaforos;
 };
 
 #endif // CARRO_H

@@ -1033,6 +1033,4 @@ CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o: \
   /opt/homebrew/include/SFML/Graphics/Glsl.inl \
   /opt/homebrew/include/SFML/Graphics/Sprite.hpp \
   /opt/homebrew/include/SFML/Graphics/Text.hpp \
-  /opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/iostream \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/usr/include/c++/v1/istream
+  /opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp
