@@ -1,5 +1,6 @@
 #include "Semaforo.h"
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 Semaforo::Semaforo(float tiempoVerde, float tiempoRojo, float tiempoAmarillo, float tiempoParpadeo, sf::Vector2f posicion, float radio)
     : tiempoVerde(tiempoVerde), tiempoRojo(tiempoRojo), tiempoAmarillo(tiempoAmarillo), tiempoParpadeo(tiempoParpadeo), 
@@ -42,13 +43,13 @@ const sf::Clock& Semaforo::obtenerReloj() const {
 void Semaforo::ponerRojo() {
     estado = Rojo;
     tiempoTranscurrido = 0.0f;
-    circuloSemaforo.setFillColor(sf::Color::Red);
+    circuloSemaforo.setFillColor(sf::Color::Red); 
 }
 
 void Semaforo::ponerVerde() {
     estado = Verde;
     tiempoTranscurrido = 0.0f;
-    circuloSemaforo.setFillColor(sf::Color::Green); 
+    circuloSemaforo.setFillColor(sf::Color::Green);
 }
 
 sf::Vector2f Semaforo::obtenerPosicion() const {
@@ -75,20 +76,20 @@ void Semaforo::dibujar(sf::RenderWindow& ventana) {
 
     ventana.draw(nodoFondo);
 
-    sf::CircleShape circulo(10);
+    sf::CircleShape circulo(10); 
     circulo.setPosition(posicion.x - 10.f, posicion.y - 10.f);
 
     float tiempoTranscurrido = reloj.getElapsedTime().asSeconds();
     if (estado == Amarillo || (estado == ParpadeandoAmarillo && estaEncendido)) {
         if (fmod(tiempoTranscurrido, 1.0f) < 0.5f) {
-            circulo.setFillColor(sf::Color::Yellow);  
+            circulo.setFillColor(sf::Color::Yellow); 
         } else {
-            circulo.setFillColor(sf::Color::Transparent); 
+            circulo.setFillColor(sf::Color::Transparent);
         }
     } else if (estado == Rojo) {
-        circulo.setFillColor(sf::Color::Red);
+        circulo.setFillColor(sf::Color::Red); 
     } else if (estado == Verde) {
-        circulo.setFillColor(sf::Color::Green);
+        circulo.setFillColor(sf::Color::Green); 
     }
 
     ventana.draw(circulo);

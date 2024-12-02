@@ -35,18 +35,16 @@ public:
     bool tieneSemaforoEnConexion(const Nodo* nodoConectado) const;
     void agregarSemaforoConexion(Nodo* nodoConectado, Semaforo* semaforo);
 
-    void cerrarCalle(Nodo* nodoConectado);
-    void abrirCalle(Nodo* nodoConectado);
-    bool estaCerradaCon(Nodo* nodoConectado) const;
-
     sf::CircleShape& getCirculo();
     const sf::CircleShape& getCirculo() const;
 
     std::unordered_map<Nodo*, std::pair<Semaforo*, bool>> semaforosPorConexion;
 
     Semaforo* obtenerSemaforo() const;
-    
-    void setColor(sf::CircleShape& circulo) const;
+
+    void setColor(sf::Color color);
+    void cerrarCalle();   
+    bool esCerrada() const;
 
 private:
     Semaforo* semaforo;
@@ -54,7 +52,7 @@ private:
 
     std::string nombre;
     sf::Color color;
-    sf::CircleShape circulo;
+    mutable sf::CircleShape circulo;
     float radio;
     int fila;
     int columna;

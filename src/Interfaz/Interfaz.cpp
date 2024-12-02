@@ -157,6 +157,51 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         }
     });
 
+    botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 620), [this, &grafo]() {
+    Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+
+    std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
+
+    if (!conexiones.empty()) {
+        static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+        Nodo* nodoConectado = nullptr;
+
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(conexiones.begin(), conexiones.end(), g);
+
+        for (Nodo* nodoCandidato : conexiones) {
+            if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
+                conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
+
+                nodoConectado = nodoCandidato;
+                break;
+            }
+        }
+
+        // En el código donde cierras la calle:
+        if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
+            nodoRelacionado->cerrarCalle();   // Marca la calle como cerrada
+            nodoConectado->cerrarCalle();     // Marca la calle como cerrada
+
+            conexionesCerradas.insert({nodoRelacionado, nodoConectado});
+            conexionesCerradas.insert({nodoConectado, nodoRelacionado});
+
+            // Cambiar el color de los nodos para indicar que la calle está cerrada
+            nodoRelacionado->setColor(sf::Color::Red);  // Cambiar color a rojo para indicar calle cerrada
+            nodoConectado->setColor(sf::Color::Red);   // Cambiar color a rojo para el nodo conectado
+
+            std::cout << "Calle cerrada entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
+        }
+
+    }
+});
+
+
+
+
+
+
 }
 
 void Interfaz::cambiarClima() {

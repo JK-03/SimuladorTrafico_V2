@@ -200,12 +200,12 @@ std::string Grafo::obtenerNodoDesdePosicion(const sf::Vector2f& posicion, float 
 }
 
 std::unordered_map<std::string, Nodo> Grafo::obtenerNodos() const {
-        std::unordered_map<std::string, Nodo> nodosUnorderedMap;
-        for (const auto& par : nodos) {
-            nodosUnorderedMap[par.first] = par.second;
-        }
-        return nodosUnorderedMap;
+    std::unordered_map<std::string, Nodo> nodosUnorderedMap;
+    for (const auto& par : nodos) {
+        nodosUnorderedMap[par.first] = par.second;
     }
+    return nodosUnorderedMap;
+}
 
 std::map<std::string, Nodo> Grafo::getNodosSemaforos() const {
     std::map<std::string, Nodo> nodosSemaforos;
