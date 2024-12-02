@@ -39,5 +39,4 @@ target_link_libraries(TrafficSimulation
     sfml-graphics 
     sfml-window 
     sfml-system 
-    
 )

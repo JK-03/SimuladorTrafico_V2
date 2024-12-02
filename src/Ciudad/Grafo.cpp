@@ -61,7 +61,7 @@ void Grafo::actualizarSemaforos(float deltaTiempo) {
         for (Nodo* conexion : conexiones) {
             auto it = nodo->semaforosPorConexion.find(conexion);
             if (it != nodo->semaforosPorConexion.end()) {
-                Semaforo* semaforo = it->second;
+                Semaforo* semaforo = it->second.first;
                 semaforo->actualizar(deltaTiempo);  
             }
         }

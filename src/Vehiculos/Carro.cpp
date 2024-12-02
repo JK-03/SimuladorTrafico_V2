@@ -1,4 +1,5 @@
 #include "Carro.h"
+#include "Interfaz.h"
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -6,6 +7,8 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 #include <unordered_set>
+
+float Carro::velocidadClima = 15.0f;
 
 Carro::Carro(const std::string& nombre, const sf::Vector2f& posicion, float velocidad, 
              Grafo& grafo, const std::string& rutaImagen, 
@@ -192,9 +195,10 @@ void Carro::calcularRuta(const std::string& nodoInicio, const std::string& nodoD
 void Carro::mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& carros) {
     if (!colisionado) return;
 
-    sf::CircleShape indicador(radioEspera);
+    float radioPequeno = 30.0f; // Cambia a un tamaño más pequeño
+    sf::CircleShape indicador(radioPequeno);
     indicador.setFillColor(sf::Color(255, 0, 0, 100));
-    indicador.setPosition(posicion.x - radioEspera, posicion.y - radioEspera);
+    indicador.setPosition(posicion.x, posicion.y);
     window.draw(indicador);
 }
 
@@ -256,14 +260,14 @@ void Carro::verificarSemaforos(ArbolSemaforos* arbolSemaforos) {
     }
 
     NodoArbol* semaforoCercano = arbolSemaforos->buscarSemaforoCercano(posicion, 30.0f);
-    
+
     if (semaforoCercano) {
         if (semaforoCercano->semaforo->estaRojo()) {
             enEspera = true;
-            detener(0.0f);
+            velocidad = 0.0f;
         } else {
             enEspera = false;
-            velocidad = 15.0f;
+            actualizarVelocidad(Carro::velocidadClima);
         }
     }
 }

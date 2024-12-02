@@ -165,17 +165,17 @@ void Interfaz::cambiarClima() {
         case 0:
             climaActual = SOLEADO;
             temperatura = 25.0f;
-            velocidadClima = 10.0f;
+            Carro::velocidadClima = 10.0f;
             break;
         case 1:
             climaActual = LLUVIA;
             temperatura = 15.0f;
-            velocidadClima = 5.7f;
+            Carro::velocidadClima = 5.7f;
             break;
         case 2:
             climaActual = NIEVE;
             temperatura = -5.0f;
-            velocidadClima = 20.f;
+            Carro::velocidadClima = 20.f;
             break;
     }
     actualizarVelocidadesDeVehiculos();

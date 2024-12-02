@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Semaforo.h"
 #include <map>
+#include <unordered_map>
 
 class Nodo {
 public:
@@ -34,21 +35,33 @@ public:
     bool tieneSemaforoEnConexion(const Nodo* nodoConectado) const;
     void agregarSemaforoConexion(Nodo* nodoConectado, Semaforo* semaforo);
 
-    std::unordered_map<Nodo*, Semaforo*> semaforosPorConexion;
+    void cerrarCalle(Nodo* nodoConectado);
+    void abrirCalle(Nodo* nodoConectado);
+    bool estaCerradaCon(Nodo* nodoConectado) const;
+
+    sf::CircleShape& getCirculo();
+    const sf::CircleShape& getCirculo() const;
+
+    std::unordered_map<Nodo*, std::pair<Semaforo*, bool>> semaforosPorConexion;
 
     Semaforo* obtenerSemaforo() const;
+    
+    void setColor(sf::CircleShape& circulo) const;
 
 private:
-    Semaforo* semaforo; 
+    Semaforo* semaforo;
     std::map<Nodo*, Semaforo*> semaforosConexiones; 
 
     std::string nombre;
+    sf::Color color;
+    sf::CircleShape circulo;
     float radio;
     int fila;
     int columna;
     sf::Vector2f posicion;
     mutable sf::Clock reloj;
-    bool esSemaforo; 
+    bool esSemaforo;
+    bool estaCerrada = false;
 };
 
 #endif // NODO_H

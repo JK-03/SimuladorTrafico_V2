@@ -43,6 +43,8 @@ public:
 
     void verificarSemaforos(ArbolSemaforos* arbolSemaforos);
     bool dentroDelRadio(Semaforo* semaforo, float radioDeteccion);
+
+    static float velocidadClima;
     
 private:
     float tamanoCuadro;

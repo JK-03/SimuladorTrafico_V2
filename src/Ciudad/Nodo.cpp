@@ -31,14 +31,10 @@ int Nodo::obtenerColumna() const {
 }
 
 void Nodo::dibujar(sf::RenderWindow& ventana) const {
-    sf::CircleShape circulo(radio);
-    circulo.setPosition(posicion.x - radio, posicion.y - radio);
+    sf::CircleShape circulo(10);
+    circulo.setPosition(posicion.x - 10.f, posicion.y - 10.f);
 
-    if (esSemaforo) {
-        circulo.setFillColor(sf::Color::Red);
-    } else {
-        circulo.setFillColor(sf::Color::Black);
-    }
+    circulo.setFillColor(sf::Color::Black); 
 
     ventana.draw(circulo);
 }
@@ -75,9 +71,51 @@ bool Nodo::tieneSemaforoEnConexion(const Nodo* nodoConectado) const {
 void Nodo::agregarSemaforoConexion(Nodo* nodoConectado, Semaforo* semaforo) {
     if (semaforosConexiones.find(nodoConectado) == semaforosConexiones.end()) {
         semaforosConexiones[nodoConectado] = semaforo;
+        semaforosPorConexion[nodoConectado] = std::make_pair(semaforo, false); 
     }
+}
+
+void Nodo::cerrarCalle(Nodo* nodoConectado) {
+    if (semaforosPorConexion.find(nodoConectado) != semaforosPorConexion.end()) {
+        semaforosPorConexion[nodoConectado].second = true;
+    }
+}
+
+void Nodo::abrirCalle(Nodo* nodoConectado) {
+    if (semaforosPorConexion.find(nodoConectado) != semaforosPorConexion.end()) {
+        semaforosPorConexion[nodoConectado].second = false;
+    }
+}
+
+bool Nodo::estaCerradaCon(Nodo* nodoConectado) const {
+    auto it = semaforosPorConexion.find(const_cast<Nodo*>(nodoConectado));
+    if (it != semaforosPorConexion.end()) {
+        return it->second.second; 
+    }
+    return false;
 }
 
 Semaforo* Nodo::obtenerSemaforo() const {
     return semaforo;
+}
+
+void Nodo::setColor(sf::CircleShape& circulo) const {
+    circulo.setRadius(20.0f);
+
+    if (estaCerradaCon(nullptr)) {
+        circulo.setFillColor(sf::Color(255, 165, 0, 128)); 
+    } else {
+        circulo.setFillColor(sf::Color(0, 255, 0, 128));
+    }
+
+    circulo.setOutlineColor(sf::Color(0, 0, 0, 255)); 
+    circulo.setOutlineThickness(2); 
+}
+
+sf::CircleShape& Nodo::getCirculo() {
+    return circulo;
+}
+
+const sf::CircleShape& Nodo::getCirculo() const {
+    return circulo;
 }
