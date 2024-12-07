@@ -24,7 +24,7 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
             this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
     });
 
-    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 560), [this, &grafo]() {
+    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 270), [this, &grafo]() {
         Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
         sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
         std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
@@ -50,7 +50,6 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
                 conexionesUsadas.insert({nodoRelacionado, nodoConectado});
                 conexionesUsadas.insert({nodoConectado, nodoRelacionado});
 
-                // Cálculo de la posición del semáforo
                 sf::Vector2f posicionConectada = nodoConectado->obtenerPosicion();
                 float direccionX = posicionConectada.x - posicionNodo.x;
                 float direccionY = posicionConectada.y - posicionNodo.y;
@@ -67,17 +66,11 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
                 
                 nodoRelacionado->asignarSemaforo(nuevoSemaforo);
                 arbolSemaforos->insertar(nuevoSemaforo, nodoRelacionado, nodoConectado);
-                
-                if (!arbolSemaforos->existeSemaforoEnPosicion(arbolSemaforos->obtenerRaiz(), sf::Vector2f(semaforoX, semaforoY), 5.0f)) {
-                    std::cout << "Semáforo agregado en la posición: (" << semaforoX << ", " << semaforoY << ")\n";
-                } else {
-                    std::cout << "Ya existe un semáforo en esta posición, no se agrega.\n";
-                }
             }
         }
     });
 
-    botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 270), [this, &grafo]() {
+    botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 500), [this, &grafo]() {
         static int index = 0;
 
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
@@ -98,7 +91,7 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         }
 
         Carro carro("Carro_" + std::to_string(index), posicionNodo, 50.0f, grafo, "../Resources/Carro.png", {}, grafo.getNodosSemaforos());
-        std::vector<sf::Vector2f> rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 20);
+        std::vector<sf::Vector2f> rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 5);
 
         for (size_t i = 0; i < rutaCiclica.size() - 1; ++i) {
             sf::Vector2f& nodoActual = rutaCiclica[i];
@@ -139,6 +132,7 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 440), [this]() {
+        std::cout << "Presionado";
         toggleMostrarEtiquetas(); 
     });
 
@@ -158,50 +152,42 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 620), [this, &grafo]() {
-    Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
 
-    std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
+        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
 
-    if (!conexiones.empty()) {
-        static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
-        Nodo* nodoConectado = nullptr;
+        if (!conexiones.empty()) {
+            static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+            Nodo* nodoConectado = nullptr;
 
-        std::random_device rd;
-        std::mt19937 g(rd());
-        std::shuffle(conexiones.begin(), conexiones.end(), g);
+            std::random_device rd;
+            std::mt19937 g(rd());
+            std::shuffle(conexiones.begin(), conexiones.end(), g);
 
-        for (Nodo* nodoCandidato : conexiones) {
-            if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
-                conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
+            for (Nodo* nodoCandidato : conexiones) {
+                if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
+                    conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
 
-                nodoConectado = nodoCandidato;
-                break;
+                    nodoConectado = nodoCandidato;
+                    break;
+                }
             }
+
+            if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
+                nodoRelacionado->cerrarCalle();
+                nodoConectado->cerrarCalle();
+
+                conexionesCerradas.insert({nodoRelacionado, nodoConectado});
+                conexionesCerradas.insert({nodoConectado, nodoRelacionado});
+
+                nodoRelacionado->setColor(sf::Color::Red); 
+                nodoConectado->setColor(sf::Color::Red); 
+
+                std::cout << "Calle cerrada entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
+            }
+
         }
-
-        // En el código donde cierras la calle:
-        if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
-            nodoRelacionado->cerrarCalle();   // Marca la calle como cerrada
-            nodoConectado->cerrarCalle();     // Marca la calle como cerrada
-
-            conexionesCerradas.insert({nodoRelacionado, nodoConectado});
-            conexionesCerradas.insert({nodoConectado, nodoRelacionado});
-
-            // Cambiar el color de los nodos para indicar que la calle está cerrada
-            nodoRelacionado->setColor(sf::Color::Red);  // Cambiar color a rojo para indicar calle cerrada
-            nodoConectado->setColor(sf::Color::Red);   // Cambiar color a rojo para el nodo conectado
-
-            std::cout << "Calle cerrada entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
-        }
-
-    }
-});
-
-
-
-
-
-
+    });
 }
 
 void Interfaz::cambiarClima() {
@@ -210,17 +196,17 @@ void Interfaz::cambiarClima() {
         case 0:
             climaActual = SOLEADO;
             temperatura = 25.0f;
-            Carro::velocidadClima = 10.0f;
+            velocidadClima = 14.0f;
             break;
         case 1:
             climaActual = LLUVIA;
             temperatura = 15.0f;
-            Carro::velocidadClima = 5.7f;
+            velocidadClima = 10.7f;
             break;
         case 2:
             climaActual = NIEVE;
             temperatura = -5.0f;
-            Carro::velocidadClima = 20.f;
+            velocidadClima = 20.f;
             break;
     }
     actualizarVelocidadesDeVehiculos();
@@ -239,8 +225,7 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
     sf::Text textoClima;
     textoClima.setFont(font);
     std::ostringstream climaTexto; 
-    climaTexto << "Clima: " << obtenerNombreClima(climaActual) 
-               << ", " << std::fixed << std::setprecision(1) << temperatura << "°C";
+    climaTexto << "Clima: " << obtenerNombreClima(climaActual) << ", " << std::fixed << std::setprecision(1) << temperatura << "°C";
     textoClima.setString(climaTexto.str());
     textoClima.setCharacterSize(25);
     textoClima.setFillColor(sf::Color::Black);
@@ -278,12 +263,14 @@ void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
     panelDerecho.setPosition(window.getSize().x - panelAncho, panelSuperiorAltura);
     window.draw(panelDerecho);
 
+    //Ciudad
     sf::RectangleShape lineaDivisoria(sf::Vector2f(anchoLinea, 2.0f)); 
     lineaDivisoria.setFillColor(sf::Color::White);
     float posicionX = window.getSize().x - panelAncho + (panelAncho - anchoLinea) / 2;
     lineaDivisoria.setPosition(posicionX, panelSuperiorAltura + 130);
     window.draw(lineaDivisoria);
 
+    //Carros
     sf::RectangleShape lineaDivisoria2(sf::Vector2f(anchoLinea, 2.0f)); 
     lineaDivisoria2.setFillColor(sf::Color::White);
     lineaDivisoria2.setPosition(posicionX, panelSuperiorAltura + 300);
@@ -294,15 +281,25 @@ void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
         return;
     }
 
+    //Menú
     sf::Text menuTitle;
     menuTitle.setFont(fontMenu);
     menuTitle.setString("MENU");
     menuTitle.setCharacterSize(50);
     menuTitle.setFillColor(sf::Color::White);
 
+    sf::Text ciudadTitle;
+    ciudadTitle.setFont(fontMenu);
+    ciudadTitle.setString("Ciudad");
+    ciudadTitle.setCharacterSize(20);
+    ciudadTitle.setFillColor(sf::Color::White);
+
     float titleWidth = menuTitle.getGlobalBounds().width;
     menuTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - titleWidth) / 2, panelSuperiorAltura + 10);
     window.draw(menuTitle);
+
+    ciudadTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - titleWidth) / 2, panelSuperiorAltura + 30);
+    window.draw(ciudadTitle);
 
     botonManager.draw(window);
 }

@@ -195,7 +195,7 @@ void Carro::calcularRuta(const std::string& nodoInicio, const std::string& nodoD
 void Carro::mostrarColision(sf::RenderWindow& window, const std::vector<Carro*>& carros) {
     if (!colisionado) return;
 
-    float radioPequeno = 30.0f; // Cambia a un tamaño más pequeño
+    float radioPequeno = 30.0f;
     sf::CircleShape indicador(radioPequeno);
     indicador.setFillColor(sf::Color(255, 0, 0, 100));
     indicador.setPosition(posicion.x, posicion.y);
