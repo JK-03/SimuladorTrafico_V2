@@ -297,6 +297,30 @@ src/Vehiculos/Carro.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.s
 .PHONY : src/Vehiculos/Carro.cpp.s
 
+src/Vehiculos/CarroEspecial.o: src/Vehiculos/CarroEspecial.cpp.o
+.PHONY : src/Vehiculos/CarroEspecial.o
+
+# target to build an object file
+src/Vehiculos/CarroEspecial.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.o
+.PHONY : src/Vehiculos/CarroEspecial.cpp.o
+
+src/Vehiculos/CarroEspecial.i: src/Vehiculos/CarroEspecial.cpp.i
+.PHONY : src/Vehiculos/CarroEspecial.i
+
+# target to preprocess a source file
+src/Vehiculos/CarroEspecial.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.i
+.PHONY : src/Vehiculos/CarroEspecial.cpp.i
+
+src/Vehiculos/CarroEspecial.s: src/Vehiculos/CarroEspecial.cpp.s
+.PHONY : src/Vehiculos/CarroEspecial.s
+
+# target to generate assembly for a file
+src/Vehiculos/CarroEspecial.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.s
+.PHONY : src/Vehiculos/CarroEspecial.cpp.s
+
 src/Vehiculos/Colisionador.o: src/Vehiculos/Colisionador.cpp.o
 .PHONY : src/Vehiculos/Colisionador.o
 
@@ -399,6 +423,9 @@ help:
 	@echo "... src/Vehiculos/Carro.o"
 	@echo "... src/Vehiculos/Carro.i"
 	@echo "... src/Vehiculos/Carro.s"
+	@echo "... src/Vehiculos/CarroEspecial.o"
+	@echo "... src/Vehiculos/CarroEspecial.i"
+	@echo "... src/Vehiculos/CarroEspecial.s"
 	@echo "... src/Vehiculos/Colisionador.o"
 	@echo "... src/Vehiculos/Colisionador.i"
 	@echo "... src/Vehiculos/Colisionador.s"

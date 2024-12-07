@@ -68,6 +68,7 @@
         "typeindex": "cpp",
         "iomanip": "cpp",
         "visualsimulador": "cpp",
-        "vistasimulador": "cpp"
+        "vistasimulador": "cpp",
+        "carroespecial": "cpp"
     }
 }

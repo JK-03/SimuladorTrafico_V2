@@ -32,7 +32,7 @@ public:
 
     float getVelocidad() const;
 
-    static std::vector<sf::Vector2f> generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad);
+    std::vector<sf::Vector2f> generarRutaCiclicaSinNodoPrevio(Grafo& grafo, const std::string& nodoInicio, int cantidad, const std::string& nodoPrevio);
 
     bool colisionDetectada() const;
     bool verificarColisiones(const std::vector<Carro*>& listaDeCarros);
@@ -48,7 +48,6 @@ public:
     
 private:
     float tamanoCuadro;
-    std::vector<sf::Vector2f> ruta;
     std::map<std::string, Nodo> nodosSemaforos;
 
     float tiempoDetenido = 0;
@@ -57,6 +56,9 @@ private:
     Grafo& grafo; 
     Colisionador colisionador;
     ArbolSemaforos* arbolSemaforos;
+
+protected:
+    std::vector<sf::Vector2f> ruta;
 };
 
 #endif // CARRO_H

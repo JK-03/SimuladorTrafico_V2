@@ -44,70 +44,73 @@ void Carro::mover(float deltaTime) {
         return;
     }
 
-    if (ruta.size() < 2) {
+    if (ruta.size() == 1) {
+        std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion);
+        std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(grafo, nodoActual, 5, "");
+
+        if (!nuevaRuta.empty()) {
+            posicion = nuevaRuta.front();
+            ruta = nuevaRuta;
+        } else {
+            std::cout << "No se generó una nueva ruta." << std::endl;
+        }
         return;
     }
 
     verificarSemaforos(arbolSemaforos);
-    
-    if (colisionado) {
-        return;
-    }
 
-    sf::Vector2f posicionActual = ruta.front();
-    sf::Vector2f posicionSiguiente = ruta[1];
+    if (ruta.size() >= 2) {
+        sf::Vector2f posicionActual = ruta.front();
+        sf::Vector2f posicionSiguiente = ruta[1];
 
-    bool esVertical = std::abs(posicionSiguiente.x - posicionActual.x) < std::numeric_limits<float>::epsilon();
-    bool esHorizontal = std::abs(posicionSiguiente.y - posicionActual.y) < std::numeric_limits<float>::epsilon();
+        sf::Vector2f direccion = posicionSiguiente - posicionActual;
+        float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
+        if (distanciaTotal > 0) {
+            direccion /= distanciaTotal;
+        }
 
-    if (esVertical) {
-        if (posicionSiguiente.y > posicionActual.y) {
-            posicionActual.x -= tamanoCuadro / 4.0f;
-            posicionSiguiente.x -= tamanoCuadro / 4.0f;
+        sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
+
+        float distanciaRecorrida = std::sqrt(
+            (nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
+            (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)
+        );
+
+        if (distanciaRecorrida >= distanciaTotal - 0.1f) {
+            // Eliminar el nodo actual de la ruta
+            ruta.erase(ruta.begin());
+
+            if (ruta.size() > 1) {
+                posicion = ruta.front();
+            } else {
+                // Guardar el penúltimo nodo para evitar retroceder
+                std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion);
+                std::string nodoPrevio = ruta.size() > 1 ? grafo.obtenerNodoDesdePosicion(ruta[1]) : "";
+                
+                // Generar una nueva ruta excluyendo el nodo previo
+                std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(grafo, nodoActual, 5, nodoPrevio);
+
+                if (!nuevaRuta.empty()) {
+                    ruta = nuevaRuta;
+                    posicion = ruta.front();
+                } else {
+                    std::cout << "No se generó una nueva ruta." << std::endl;
+                }
+            }
         } else {
-            posicionActual.x += tamanoCuadro / 4.0f;
-            posicionSiguiente.x += tamanoCuadro / 4.0f;
+            posicion = nuevaPosicion;
         }
-    } else if (esHorizontal) {
-        if (posicionSiguiente.x > posicionActual.x) {
-            posicionActual.y += tamanoCuadro / 4.0f;
-            posicionSiguiente.y += tamanoCuadro / 4.0f;
-        } else {
-            posicionActual.y -= tamanoCuadro / 4.0f;
-            posicionSiguiente.y -= tamanoCuadro / 4.0f;
-        }
-    }
-
-    sf::Vector2f direccion = posicionSiguiente - posicionActual;
-    float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
-    if (distanciaTotal > 0) {
-        direccion /= distanciaTotal;
-    }
-
-    sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
-
-    float distanciaRecorrida = std::sqrt(
-        (nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
-        (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)
-    );
-
-    if (distanciaRecorrida >= distanciaTotal) {
-        ruta.erase(ruta.begin());
-        if (!ruta.empty()) {
-            posicion = ruta.front();
-        }
-    } else {
-        posicion = nuevaPosicion;
     }
 
     sprite.setPosition(posicion);
 }
 
-std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::string& nodoInicio, int cantidad) {
+std::vector<sf::Vector2f> Carro::generarRutaCiclicaSinNodoPrevio(Grafo& grafo, const std::string& nodoInicio, int cantidad, const std::string& nodoPrevio) {
     std::vector<sf::Vector2f> ruta;
     std::unordered_set<std::string> nodosVisitados;
     std::string nodoActual = nodoInicio;
 
+    // Inicialización con el primer nodo
     ruta.push_back(grafo.obtenerPosicionNodo(nodoActual));
     nodosVisitados.insert(nodoActual);
 
@@ -119,8 +122,16 @@ std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::str
         }
 
         std::vector<std::string> nodosNoVisitados;
-        std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
-                     [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0; });
+
+        // Si el nodo previo está en las conexiones, no lo excluimos
+        if (!nodoPrevio.empty() && std::find(nodosConectados.begin(), nodosConectados.end(), nodoPrevio) != nodosConectados.end()) {
+            std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
+                         [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0; });
+        } else {
+            // Si el nodo previo no está en las conexiones, lo excluimos
+            std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
+                         [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0 && nodo != nodoPrevio; });
+        }
 
         if (!nodosNoVisitados.empty()) {
             int indiceAleatorio = rand() % nodosNoVisitados.size();
@@ -133,9 +144,6 @@ std::vector<sf::Vector2f> Carro::generarRutaCiclica(Grafo& grafo, const std::str
         sf::Vector2f posicionNodo = grafo.obtenerPosicionNodo(nodoActual);
         ruta.push_back(posicionNodo);
     }
-
-    ruta.push_back(grafo.obtenerPosicionNodo(nodoInicio));
-
     return ruta;
 }
 

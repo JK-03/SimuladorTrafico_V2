@@ -10,6 +10,7 @@
 
 class NodoArbol;
 class Carro; 
+class CarroEspecial;
 class Grafo;
 
 class Interfaz {
@@ -32,6 +33,7 @@ public:
 
     void toggleMostrarEtiquetas();
     std::vector<Carro*>& obtenerVehiculos(); 
+    std::vector<CarroEspecial*>& obtenerVehiculosEspeciales();
 
     bool agregarNodoActivo = false; 
     bool mostrarMensajeLimite = false;
@@ -57,6 +59,7 @@ private:
     float espaciado;
 
     std::vector<Carro*> vehiculos; 
+    std::vector<CarroEspecial*> vehiculosEspecial;
 
     //Limite de Nodos - Text
     sf::Clock mensajeReloj;

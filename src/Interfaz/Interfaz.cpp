@@ -2,6 +2,7 @@
 #include "Carro.h"
 #include "Ruta.h"
 #include "Vehiculo.h"
+#include "CarroEspecial.h"
 #include <iostream>
 #include <cmath>
 #include <ctime>
@@ -17,14 +18,14 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
 
     arbolSemaforos = new ArbolSemaforos();
 
-    botonManager.agregarBoton("Calles++", sf::Vector2f(1285, 210), [this]() {
+    botonManager.agregarBoton("Calles++", sf::Vector2f(1285, 190), [this]() {
             sf::FloatRect areaValida(50, 50, 1100, 700);
             agregarNodoActivo = true;
             sf::Vector2f posicionInicial(100, 100);
             this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
     });
 
-    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 270), [this, &grafo]() {
+    botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 250), [this, &grafo]() {
         Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
         sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
         std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
@@ -70,7 +71,45 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         }
     });
 
-    botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 500), [this, &grafo]() {
+    botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 310), [this, &grafo]() {
+        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+
+        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
+
+        if (!conexiones.empty()) {
+            static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+            Nodo* nodoConectado = nullptr;
+
+            std::random_device rd;
+            std::mt19937 g(rd());
+            std::shuffle(conexiones.begin(), conexiones.end(), g);
+
+            for (Nodo* nodoCandidato : conexiones) {
+                if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
+                    conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
+
+                    nodoConectado = nodoCandidato;
+                    break;
+                }
+            }
+
+            if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
+                nodoRelacionado->cerrarCalle();
+                nodoConectado->cerrarCalle();
+
+                conexionesCerradas.insert({nodoRelacionado, nodoConectado});
+                conexionesCerradas.insert({nodoConectado, nodoRelacionado});
+
+                nodoRelacionado->setColor(sf::Color::Red); 
+                nodoConectado->setColor(sf::Color::Red); 
+
+                std::cout << "Calle cerrada entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
+            }
+
+        }
+    });
+
+    botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 420), [this, &grafo]() {
         static int index = 0;
 
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
@@ -91,7 +130,7 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         }
 
         Carro carro("Carro_" + std::to_string(index), posicionNodo, 50.0f, grafo, "../Resources/Carro.png", {}, grafo.getNodosSemaforos());
-        std::vector<sf::Vector2f> rutaCiclica = carro.generarRutaCiclica(grafo, nodoInicio, 5);
+        std::vector<sf::Vector2f> rutaCiclica = carro.generarRutaCiclicaSinNodoPrevio(grafo, nodoInicio, 5, "");
 
         for (size_t i = 0; i < rutaCiclica.size() - 1; ++i) {
             sf::Vector2f& nodoActual = rutaCiclica[i];
@@ -131,16 +170,82 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         index++;
     });
 
-    botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 440), [this]() {
-        std::cout << "Presionado";
-        toggleMostrarEtiquetas(); 
+    botonManager.agregarBoton("C. Especiales++", sf::Vector2f(1285, 480), [this, &grafo]() {
+        static int index = 0;
+
+        std::string nodoInicio = grafo.obtenerNodoAleatorio();
+        sf::Vector2f posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
+
+        bool posicionValida = true;
+        for (auto& carro : vehiculos) {
+            if (std::sqrt(std::pow(carro->obtenerPosicion().x - posicionNodo.x, 2) + 
+                        std::pow(carro->obtenerPosicion().y - posicionNodo.y, 2)) < 50) {
+                posicionValida = false;
+                break;
+            }
+        }
+
+        if (!posicionValida) {
+            nodoInicio = grafo.obtenerNodoAleatorio();
+            posicionNodo = grafo.obtenerPosicionNodo(nodoInicio);
+        }
+
+        int tipoCarro = rand() % 3 + 1;
+        std::string imagenCarro;
+
+        switch (tipoCarro) {
+            case 1:
+                imagenCarro = "../Resources/ambulancia.png";
+                break;
+            case 2:
+                imagenCarro = "../Resources/fireTruck.png";
+                break;
+            case 3:
+                imagenCarro = "../Resources/police.png";
+                break;
+        }
+
+        CarroEspecial* carroEspecial = new CarroEspecial(
+            "CarroEspecial_" + std::to_string(index),
+            posicionNodo,
+            50.0f,
+            grafo,
+            imagenCarro,
+            {}
+        );
+
+        std::vector<sf::Vector2f> rutaCiclica = carroEspecial->generarRutaCiclicaSinNodoPrevio(grafo, nodoInicio, 5, "");
+
+        for (size_t i = 0; i < rutaCiclica.size() - 1; ++i) {
+            sf::Vector2f& nodoActual = rutaCiclica[i];
+            sf::Vector2f& nodoSiguiente = rutaCiclica[i + 1];
+
+            if (std::abs(nodoSiguiente.x - nodoActual.x) < std::numeric_limits<float>::epsilon()) {
+                if (nodoSiguiente.y > nodoActual.y) {
+                    nodoActual.x -= 45.0f;
+                    nodoSiguiente.x -= 45.0f;
+                } else {
+                    nodoActual.x += 5.0f;
+                    nodoSiguiente.x += 5.0f;
+                }
+            } else if (std::abs(nodoSiguiente.y - nodoActual.y) < std::numeric_limits<float>::epsilon()) {
+                if (nodoSiguiente.x > nodoActual.x) {
+                    nodoActual.y += 5.0f;
+                    nodoSiguiente.y += 5.0f;
+                } else {
+                    nodoActual.y -= 30.0f;
+                    nodoSiguiente.y -= 30.0f;
+                }
+            }
+        }
+
+        carroEspecial->definirRuta(rutaCiclica);
+        vehiculosEspecial.push_back(carroEspecial);
+
+        index++;
     });
 
-    botonManager.agregarBoton("Clima", sf::Vector2f(1285, 380), [this]() {
-        cambiarClima();  
-    });
-
-    botonManager.agregarBoton("E. Colisiones", sf::Vector2f(1285, 500), [this]() {
+    botonManager.agregarBoton("E. Colisiones", sf::Vector2f(1285, 540), [this]() {
         for (auto it = vehiculos.begin(); it != vehiculos.end(); ) {
             if ((*it)->colisionado) {
                 delete *it; 
@@ -151,42 +256,13 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
         }
     });
 
-    botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 620), [this, &grafo]() {
-        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+    botonManager.agregarBoton("Clima", sf::Vector2f(1285, 650), [this]() {
+        cambiarClima();  
+    });
 
-        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
-
-        if (!conexiones.empty()) {
-            static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
-            Nodo* nodoConectado = nullptr;
-
-            std::random_device rd;
-            std::mt19937 g(rd());
-            std::shuffle(conexiones.begin(), conexiones.end(), g);
-
-            for (Nodo* nodoCandidato : conexiones) {
-                if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
-                    conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
-
-                    nodoConectado = nodoCandidato;
-                    break;
-                }
-            }
-
-            if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
-                nodoRelacionado->cerrarCalle();
-                nodoConectado->cerrarCalle();
-
-                conexionesCerradas.insert({nodoRelacionado, nodoConectado});
-                conexionesCerradas.insert({nodoConectado, nodoRelacionado});
-
-                nodoRelacionado->setColor(sf::Color::Red); 
-                nodoConectado->setColor(sf::Color::Red); 
-
-                std::cout << "Calle cerrada entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
-            }
-
-        }
+    botonManager.agregarBoton("Toggle Etiquetas", sf::Vector2f(1285, 710), [this]() {
+        std::cout << "Presionado";
+        toggleMostrarEtiquetas(); 
     });
 }
 
@@ -263,43 +339,77 @@ void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
     panelDerecho.setPosition(window.getSize().x - panelAncho, panelSuperiorAltura);
     window.draw(panelDerecho);
 
-    //Ciudad
+    // Ciudad
     sf::RectangleShape lineaDivisoria(sf::Vector2f(anchoLinea, 2.0f)); 
     lineaDivisoria.setFillColor(sf::Color::White);
     float posicionX = window.getSize().x - panelAncho + (panelAncho - anchoLinea) / 2;
-    lineaDivisoria.setPosition(posicionX, panelSuperiorAltura + 130);
+    lineaDivisoria.setPosition(posicionX, panelSuperiorAltura + 120);
     window.draw(lineaDivisoria);
 
-    //Carros
+    // Carros
     sf::RectangleShape lineaDivisoria2(sf::Vector2f(anchoLinea, 2.0f)); 
     lineaDivisoria2.setFillColor(sf::Color::White);
-    lineaDivisoria2.setPosition(posicionX, panelSuperiorAltura + 300);
+    lineaDivisoria2.setPosition(posicionX, panelSuperiorAltura + 350);
     window.draw(lineaDivisoria2);
+
+    // Otros
+    sf::RectangleShape lineaDivisoria3(sf::Vector2f(anchoLinea, 2.0f)); 
+    lineaDivisoria3.setFillColor(sf::Color::White);
+    lineaDivisoria3.setPosition(posicionX, panelSuperiorAltura + 580);
+    window.draw(lineaDivisoria3);
 
     sf::Font fontMenu;
     if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {
         return;
     }
 
-    //Menú
+    // Menú
     sf::Text menuTitle;
     menuTitle.setFont(fontMenu);
     menuTitle.setString("MENU");
     menuTitle.setCharacterSize(50);
     menuTitle.setFillColor(sf::Color::White);
 
+    // Apartado Ciudad
     sf::Text ciudadTitle;
     ciudadTitle.setFont(fontMenu);
     ciudadTitle.setString("Ciudad");
     ciudadTitle.setCharacterSize(20);
     ciudadTitle.setFillColor(sf::Color::White);
 
+    // Apartado Carros
+    sf::Text carrosTitle;
+    carrosTitle.setFont(fontMenu);
+    carrosTitle.setString("Carros");
+    carrosTitle.setCharacterSize(20);
+    carrosTitle.setFillColor(sf::Color::White);
+
+    // Apartado Otros
+    sf::Text otrosTitle;
+    otrosTitle.setFont(fontMenu);
+    otrosTitle.setString("Otros");
+    otrosTitle.setCharacterSize(20);
+    otrosTitle.setFillColor(sf::Color::White);
+
+    // Menú title
     float titleWidth = menuTitle.getGlobalBounds().width;
     menuTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - titleWidth) / 2, panelSuperiorAltura + 10);
     window.draw(menuTitle);
 
-    ciudadTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - titleWidth) / 2, panelSuperiorAltura + 30);
+    // Ciudad title (centrado)
+    float ciudadWidth = ciudadTitle.getGlobalBounds().width;
+    ciudadTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - ciudadWidth) / 2, panelSuperiorAltura + 90);
     window.draw(ciudadTitle);
+
+    // Ciudad Carros (centrado)
+    float carrosWidth = carrosTitle.getGlobalBounds().width;
+    carrosTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - carrosWidth) / 2, panelSuperiorAltura + 320);
+    window.draw(carrosTitle);
+
+    // Ciudad Otros (centrado)
+    float otrosWidth = otrosTitle.getGlobalBounds().width;
+    otrosTitle.setPosition(window.getSize().x - panelAncho + (panelAncho - otrosWidth) / 2, panelSuperiorAltura + 550);
+    window.draw(otrosTitle);
 
     botonManager.draw(window);
 }
@@ -335,6 +445,10 @@ void Interfaz::toggleMostrarEtiquetas() {
 
 std::vector<Carro*>& Interfaz::obtenerVehiculos() {
     return vehiculos; 
+}
+
+std::vector<CarroEspecial*>& Interfaz::obtenerVehiculosEspeciales() {
+    return vehiculosEspecial;
 }
 
 void Interfaz::setMostrarMensajeLimite(bool estatus) {

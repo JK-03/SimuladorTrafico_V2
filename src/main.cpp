@@ -1,12 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Vehiculos/Carro.h"
+#include "Vehiculos/CarroEspecial.h" 
 #include "Grafo.h"
 #include <cmath>
 #include "Interfaz.h"
 #include "Ruta.h"
 
-void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, const std::vector<Carro*>& vehiculos, bool mostrarEtiquetas) {
+void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, const std::vector<Carro*>& vehiculos, const std::vector<CarroEspecial*>& vehiculosEspeciales, bool mostrarEtiquetas) {
     window.clear(sf::Color(255, 229, 217));  
 
     sf::RectangleShape fondoGrafo(sf::Vector2f(window.getSize().x, window.getSize().y));
@@ -25,12 +26,20 @@ void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, con
         carro->mostrarColision(window, vehiculos); 
     }
 
+    for (auto& carroEspecial : vehiculosEspeciales) {
+        carroEspecial->dibujar(window);
+    }
+
     window.display();  
 }
 
-void moverCarros(std::vector<Carro*>& vehiculos, float deltaTime) {
+void moverCarros(std::vector<Carro*>& vehiculos, std::vector<CarroEspecial*>& vehiculosEspeciales, float deltaTime) {
     for (auto& carro : vehiculos) {
         carro->mover(deltaTime);
+    }
+
+    for (auto& carroEspecial : vehiculosEspeciales) {
+        carroEspecial->mover(deltaTime);
     }
 }
 
@@ -44,6 +53,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "Simulador de Trafico");
 
     std::vector<Carro*> vehiculos; 
+    std::vector<CarroEspecial*> vehiculosEspecial;
 
     sf::Font font;
     if (!font.loadFromFile("../Resources/Roboto-BoldCondensed.ttf")) {
@@ -70,9 +80,9 @@ int main() {
 
         float deltaTime = clock.restart().asSeconds(); 
         interfaz.actualizarSemaforos(deltaTime); 
-        moverCarros(interfaz.obtenerVehiculos(), deltaTime);
+        moverCarros(interfaz.obtenerVehiculos(), interfaz.obtenerVehiculosEspeciales(), deltaTime);
         verificarColisiones(interfaz.obtenerVehiculos());
-        dibujarTodo(window, grafo, interfaz, interfaz.obtenerVehiculos(), interfaz.isMostrarEtiquetas());
+        dibujarTodo(window, grafo, interfaz, interfaz.obtenerVehiculos(), interfaz.obtenerVehiculosEspeciales(), interfaz.isMostrarEtiquetas());
     }
 
     for (auto& carro : interfaz.obtenerVehiculos()) {

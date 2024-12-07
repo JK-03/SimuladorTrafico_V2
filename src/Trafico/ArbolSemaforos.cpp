@@ -28,11 +28,7 @@ void ArbolSemaforos::insertarAux(NodoArbol*& nodo, Semaforo* semaforo, Nodo* nod
         nodo1->obtenerPosicion().y + direccionY * distancia
     );
 
-    std::cout << "Intentando insertar semáforo en la posición calculada: (" 
-              << posicionSemaforo.x << ", " << posicionSemaforo.y << ")" << std::endl;
-
     if (nodo1->tieneSemaforoEnConexion(nodo2)) {
-        std::cout << "Ya existe un semáforo en la conexión." << std::endl;
         return;
     }
 

@@ -13,6 +13,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.o"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Carro.cpp.o.d"
+  "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.o"
+  "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Colisionador.cpp.o"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Colisionador.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Vehiculos/Vehiculo.cpp.o"

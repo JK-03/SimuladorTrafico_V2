@@ -29,6 +29,7 @@ set(SOURCES
     src/Vehiculos/Vehiculo.cpp
     src/Vehiculos/Colisionador.cpp
     src/Trafico/ArbolSemaforos.cpp
+    src/Vehiculos/CarroEspecial.cpp
 )
 
 # Crear el ejecutable

@@ -15,9 +15,8 @@ public:
     sf::Vector2f obtenerPosicion() const;
 
     void establecerDireccionMovimiento(int direccion);
-    int obtenerCarril() const;
-
     int obtenerDireccionMovimiento() const;
+    int obtenerCarril() const;
 
 protected:
     std::string nombre;
