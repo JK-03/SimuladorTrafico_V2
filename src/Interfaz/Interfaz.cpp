@@ -1,6 +1,5 @@
 #include "Interfaz.h"
 #include "Carro.h"
-#include "Ruta.h"
 #include "Vehiculo.h"
 #include "CarroEspecial.h"
 #include <iostream>

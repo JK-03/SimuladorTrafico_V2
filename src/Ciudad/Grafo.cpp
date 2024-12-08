@@ -68,10 +68,6 @@ void Grafo::actualizarSemaforos(float deltaTiempo) {
     }
 }
 
-Semaforo& Grafo::obtenerSemaforo(const std::string& nombreNodo) {
-    //return nodos[nombreNodo].obtenerSemaforo(); 
-}
-
 void Grafo::dibujar(sf::RenderWindow& window, bool mostrarEtiquetas) {
     if (!font.loadFromFile("../Resources/Roboto-BoldCondensed.ttf")) {}
     

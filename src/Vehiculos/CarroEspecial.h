@@ -11,7 +11,6 @@ public:
                   float tamanoCuadro = 50.0f);
 
     void mover(float deltaTime) override;
-    void verificarSemaforos(ArbolSemaforos* arbolSemaforos); 
     void definirRuta(const std::vector<sf::Vector2f>& nuevaRuta);
     void dibujar(sf::RenderWindow& window) override;
 

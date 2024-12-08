@@ -5,7 +5,6 @@
 #include "Grafo.h"
 #include <cmath>
 #include "Interfaz.h"
-#include "Ruta.h"
 
 void dibujarTodo(sf::RenderWindow& window, Grafo& grafo, Interfaz& interfaz, const std::vector<Carro*>& vehiculos, const std::vector<CarroEspecial*>& vehiculosEspeciales, bool mostrarEtiquetas) {
     window.clear(sf::Color(255, 229, 217));  

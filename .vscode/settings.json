@@ -71,6 +71,7 @@
         "vistasimulador": "cpp",
         "carroespecial": "cpp",
         "charconv": "cpp",
-        "forward_list": "cpp"
+        "forward_list": "cpp",
+        "random": "cpp"
     }
 }

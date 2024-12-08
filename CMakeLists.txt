@@ -27,7 +27,6 @@ set(SOURCES
     src/Ciudad/Nodo.cpp
     src/Ciudad/Semaforo.cpp
     src/Vehiculos/Vehiculo.cpp
-    src/Vehiculos/Colisionador.cpp
     src/Trafico/ArbolSemaforos.cpp
     src/Vehiculos/CarroEspecial.cpp
 )

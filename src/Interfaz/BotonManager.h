@@ -8,8 +8,10 @@
 class BotonManager {
 public:
     BotonManager(const sf::Font& font);
+
     void agregarBoton(const std::string& texto, const sf::Vector2f& posicion, std::function<void()> callback);
     void draw(sf::RenderWindow& window);
+
     void manejarEventos(const sf::Event& event, sf::RenderWindow& window);
 
 private:

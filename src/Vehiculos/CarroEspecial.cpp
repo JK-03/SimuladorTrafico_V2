@@ -14,9 +14,6 @@ void CarroEspecial::mover(float deltaTime) {
     Carro::mover(deltaTime); 
 }
 
-void CarroEspecial::verificarSemaforos(ArbolSemaforos* arbolSemaforos) {
-}
-
 bool CarroEspecial::tienePrioridad() const {
     return prioridad;
 }

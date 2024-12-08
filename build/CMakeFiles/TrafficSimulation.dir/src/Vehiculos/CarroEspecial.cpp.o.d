@@ -2,7 +2,7 @@ CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.o: \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/CarroEspecial.cpp \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/CarroEspecial.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Carro.h \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Vehiculos/Colisionador.h \
+  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/Interfaz.h \
   /opt/homebrew/include/SFML/Graphics.hpp \
   /opt/homebrew/include/SFML/Window.hpp \
   /opt/homebrew/include/SFML/System.hpp \
@@ -1036,7 +1036,6 @@ CMakeFiles/TrafficSimulation.dir/src/Vehiculos/CarroEspecial.cpp.o: \
   /opt/homebrew/include/SFML/Graphics/Sprite.hpp \
   /opt/homebrew/include/SFML/Graphics/Text.hpp \
   /opt/homebrew/include/SFML/Graphics/VertexBuffer.hpp \
-  /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/Interfaz.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Interfaz/BotonManager.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Grafo.h \
   /Users/jenniferbueso/Library/CloudStorage/OneDrive-Personal/Documents/Estructura\ de\ Datos\ I/SistemaDeTrafico/src/Ciudad/Semaforo.h \

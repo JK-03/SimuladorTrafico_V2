@@ -72,10 +72,6 @@ std::string Nodo::obtenerNombre() const {
     return nombre;
 }
 
-Semaforo* Nodo::getSemaforo() const {
-    return semaforo; 
-}
-
 Semaforo* Nodo::obtenerSemaforo() const {
     return semaforo;
 }
