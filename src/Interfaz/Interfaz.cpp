@@ -19,13 +19,18 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     arbolSemaforos = new ArbolSemaforos();
 
     botonManager.agregarBoton("Calles++", sf::Vector2f(1285, 190), [this]() {
-            sf::FloatRect areaValida(50, 50, 1100, 700);
-            agregarNodoActivo = true;
-            sf::Vector2f posicionInicial(100, 100);
-            this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
+        sf::FloatRect areaValida(50, 50, 1100, 700);
+        agregarNodoActivo = true;
+        sf::Vector2f posicionInicial(100, 100);
+        this->grafo.agregarNodosSecuenciales(espaciado, areaValida, posicionInicial);
     });
 
     botonManager.agregarBoton("Semaforos++", sf::Vector2f(1285, 250), [this, &grafo]() {
+        if (grafo.obtenerCantidadNodos() < 2) {
+            mostrarMensajeSemaforos = true;
+            return;
+        }
+
         Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
         sf::Vector2f posicionNodo = nodoRelacionado->obtenerPosicion();
         std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
@@ -110,6 +115,11 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 420), [this, &grafo]() {
+        if (grafo.obtenerCantidadNodos() == 0) {
+            mostrarMensajeGrafoVacio = true;
+            return;
+        }
+
         static int index = 0;
 
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
@@ -171,6 +181,11 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("C. Especiales++", sf::Vector2f(1285, 480), [this, &grafo]() {
+        if (grafo.obtenerCantidadNodos() == 0) {
+            mostrarMensajeGrafoVacio = true;
+            return;
+        }
+
         static int index = 0;
 
         std::string nodoInicio = grafo.obtenerNodoAleatorio();
@@ -309,8 +324,9 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
     window.draw(textoClima);
 
     dibujarMensajeLimite(window);
+    dibujarMensajeGrafoVacio(window);
+    dibujarMensajeSemaforo(window);
 }
-
 
 std::string Interfaz::obtenerNombreClima(Clima clima) {
     switch (clima) {
@@ -416,7 +432,12 @@ void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
 
 void Interfaz::dibujarMensajeLimite(sf::RenderWindow& window) {
     if (mostrarMensajeLimite) {
-        sf::Text mensajeLimite("Limite de nodos alcanzado", font, 25);
+        sf::Font fontMenu;
+        if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {
+            return;
+        }
+
+        sf::Text mensajeLimite("Limite de nodos alcanzado", fontMenu, 25);
         mensajeLimite.setFillColor(sf::Color::Black);
 
         float mensajeX = window.getSize().x - 300.0f;
@@ -427,6 +448,48 @@ void Interfaz::dibujarMensajeLimite(sf::RenderWindow& window) {
 
         if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
             mostrarMensajeLimite = false;
+        }
+    }
+}
+
+void Interfaz::dibujarMensajeGrafoVacio(sf::RenderWindow& window) {
+    if (mostrarMensajeGrafoVacio) {
+        sf::Font fontMenu;
+        if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {
+            return;
+        }
+        sf::Text mensajeGrafoVacio("No se pueden agregar carros, el grafo esta vacio", fontMenu, 25);
+        mensajeGrafoVacio.setFillColor(sf::Color::Black);
+
+        float mensajeX = window.getSize().x - 490.0f;
+        float mensajeY = 10.0f; 
+        mensajeGrafoVacio.setPosition(mensajeX, mensajeY);
+
+        window.draw(mensajeGrafoVacio);
+
+        if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
+            mostrarMensajeGrafoVacio = false;
+        }
+    }
+}
+
+void Interfaz::dibujarMensajeSemaforo(sf::RenderWindow& window) {
+    if (mostrarMensajeSemaforos) {
+        sf::Font fontMenu;
+        if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {
+            return;
+        }
+        sf::Text mensajeGrafoVacio("Agrega mas calles para poder generar un semaforo", fontMenu, 25);
+        mensajeGrafoVacio.setFillColor(sf::Color::Black);
+
+        float mensajeX = window.getSize().x - 550.0f;
+        float mensajeY = 10.0f; 
+        mensajeGrafoVacio.setPosition(mensajeX, mensajeY);
+
+        window.draw(mensajeGrafoVacio);
+
+        if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
+            mostrarMensajeSemaforos = false;
         }
     }
 }

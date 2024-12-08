@@ -77,17 +77,14 @@ void Carro::mover(float deltaTime) {
         );
 
         if (distanciaRecorrida >= distanciaTotal - 0.1f) {
-            // Eliminar el nodo actual de la ruta
             ruta.erase(ruta.begin());
 
             if (ruta.size() > 1) {
                 posicion = ruta.front();
             } else {
-                // Guardar el penúltimo nodo para evitar retroceder
                 std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion);
                 std::string nodoPrevio = ruta.size() > 1 ? grafo.obtenerNodoDesdePosicion(ruta[1]) : "";
                 
-                // Generar una nueva ruta excluyendo el nodo previo
                 std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(grafo, nodoActual, 5, nodoPrevio);
 
                 if (!nuevaRuta.empty()) {
@@ -110,7 +107,6 @@ std::vector<sf::Vector2f> Carro::generarRutaCiclicaSinNodoPrevio(Grafo& grafo, c
     std::unordered_set<std::string> nodosVisitados;
     std::string nodoActual = nodoInicio;
 
-    // Inicialización con el primer nodo
     ruta.push_back(grafo.obtenerPosicionNodo(nodoActual));
     nodosVisitados.insert(nodoActual);
 
@@ -123,12 +119,10 @@ std::vector<sf::Vector2f> Carro::generarRutaCiclicaSinNodoPrevio(Grafo& grafo, c
 
         std::vector<std::string> nodosNoVisitados;
 
-        // Si el nodo previo está en las conexiones, no lo excluimos
         if (!nodoPrevio.empty() && std::find(nodosConectados.begin(), nodosConectados.end(), nodoPrevio) != nodosConectados.end()) {
             std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
                          [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0; });
         } else {
-            // Si el nodo previo no está en las conexiones, lo excluimos
             std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
                          [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0 && nodo != nodoPrevio; });
         }

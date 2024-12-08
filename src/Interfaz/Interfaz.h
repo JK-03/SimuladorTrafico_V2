@@ -22,6 +22,8 @@ public:
     void manejarEventos(const sf::Event& event, sf::RenderWindow& window);
     void setMostrarMensajeLimite(bool estatus);
     void dibujarMensajeLimite(sf::RenderWindow& window);
+    void dibujarMensajeGrafoVacio(sf::RenderWindow& window);
+    void dibujarMensajeSemaforo(sf::RenderWindow& window);
     void actualizarVelocidad(float nuevaVelocidad); 
     void cambiarClima();
     void dibujarSemaforos(sf::RenderWindow& window);
@@ -63,8 +65,11 @@ private:
 
     //Limite de Nodos - Text
     sf::Clock mensajeReloj;
-    float tiempoMensajeVisible = 10.0f;
+    float tiempoMensajeVisible = 8.0f;
     bool mostrarMensaje = true; 
+    bool mostrarMensajeGrafoVacio = false;
+    bool mostrarMensajeSemaforos = false;
+
 
     enum Clima { SOLEADO, LLUVIA, NIEVE };
     Clima climaActual;

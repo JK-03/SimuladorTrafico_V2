@@ -286,3 +286,7 @@ std::vector<Nodo*> Grafo::obtenerConexionesDeNodo(const Nodo* nodo) {
 
     return conexiones;
 }
+
+size_t Grafo::obtenerCantidadNodos() const {
+    return nodos.size(); 
+}

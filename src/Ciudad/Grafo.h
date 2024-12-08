@@ -51,6 +51,8 @@ class Grafo {
 
         Nodo* obtenerNodoAlAzar();
 
+        size_t obtenerCantidadNodos() const;
+
     private:
         std::map<std::string, Nodo> nodos;
         std::vector<std::pair<std::string, std::string>> aristas;
