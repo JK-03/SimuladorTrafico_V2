@@ -111,3 +111,7 @@ bool Nodo::tieneSemaforoEnConexion(const Nodo* nodoConectado) const {
 void Nodo::cerrarCalle() {
     estaCerrada = true;
 }
+
+sf::Vector2f Nodo::getPosicion() const {
+    return posicion;
+}

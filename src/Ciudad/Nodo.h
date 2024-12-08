@@ -46,6 +46,8 @@ public:
     void cerrarCalle();   
     bool esCerrada() const;
 
+    sf::Vector2f getPosicion() const;
+
 private:
     Semaforo* semaforo;
     std::map<Nodo*, Semaforo*> semaforosConexiones; 

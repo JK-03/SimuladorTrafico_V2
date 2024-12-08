@@ -50,6 +50,7 @@ class Grafo {
         void setInterfaz(Interfaz* interfaz);
 
         Nodo* obtenerNodoAlAzar();
+        Nodo* obtenerNodoPorNombre(const std::string& nombreNodo);
 
         size_t obtenerCantidadNodos() const;
 

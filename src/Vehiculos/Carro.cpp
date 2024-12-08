@@ -63,6 +63,23 @@ void Carro::mover(float deltaTime) {
         sf::Vector2f posicionActual = ruta.front();
         sf::Vector2f posicionSiguiente = ruta[1];
 
+        std::string nodoActualNombre = grafo.obtenerNodoDesdePosicion(posicionActual);
+        std::string nodoSiguienteNombre = grafo.obtenerNodoDesdePosicion(posicionSiguiente);
+
+        Nodo* nodoSiguiente = grafo.obtenerNodoPorNombre(nodoSiguienteNombre);
+        if (nodoSiguiente && nodoSiguiente->esCerrada()) {
+            
+            // Generar una nueva ruta sin incluir la calle cerrada
+            std::string nodoPrevio = nodoActualNombre;
+            std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(grafo, nodoPrevio, 5, nodoSiguienteNombre);
+
+            if (!nuevaRuta.empty()) {
+                ruta = nuevaRuta;
+                posicion = ruta.front();
+            } 
+            return;
+        }
+
         sf::Vector2f direccion = posicionSiguiente - posicionActual;
         float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
         if (distanciaTotal > 0) {
@@ -117,27 +134,27 @@ std::vector<sf::Vector2f> Carro::generarRutaCiclicaSinNodoPrevio(Grafo& grafo, c
             break;
         }
 
-        std::vector<std::string> nodosNoVisitados;
+        std::vector<std::string> nodosValidos;
+        std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosValidos),
+                     [&](const std::string& nodo) {
+                         return nodosVisitados.count(nodo) == 0 && nodo != nodoPrevio;
+                     });
 
-        if (!nodoPrevio.empty() && std::find(nodosConectados.begin(), nodosConectados.end(), nodoPrevio) != nodosConectados.end()) {
-            std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
-                         [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0; });
-        } else {
-            std::copy_if(nodosConectados.begin(), nodosConectados.end(), std::back_inserter(nodosNoVisitados),
-                         [&](const std::string& nodo) { return nodosVisitados.count(nodo) == 0 && nodo != nodoPrevio; });
-        }
-
-        if (!nodosNoVisitados.empty()) {
-            int indiceAleatorio = rand() % nodosNoVisitados.size();
-            nodoActual = nodosNoVisitados[indiceAleatorio];
+        if (!nodosValidos.empty()) {
+            int indiceAleatorio = rand() % nodosValidos.size();
+            nodoActual = nodosValidos[indiceAleatorio];
             nodosVisitados.insert(nodoActual);
+
+            ruta.push_back(grafo.obtenerPosicionNodo(nodoActual));
         } else {
             break;
         }
-
-        sf::Vector2f posicionNodo = grafo.obtenerPosicionNodo(nodoActual);
-        ruta.push_back(posicionNodo);
     }
+
+    if (!ruta.empty() && nodoPrevio == grafo.obtenerNodoDesdePosicion(ruta.front())) {
+        ruta.erase(ruta.begin()); 
+    }
+
     return ruta;
 }
 
