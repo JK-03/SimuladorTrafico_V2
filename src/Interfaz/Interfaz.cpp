@@ -14,6 +14,7 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <cstdlib> 
 
 Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     : font(fuente), botonManager(fuente), grafo(grafo), espaciado(200.0f), climaActual(SOLEADO), temperatura(25.0f), velocidadClima(1.0f) {
@@ -309,24 +310,46 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
 
 void Interfaz::cambiarClima() {
     int climaRandom = rand() % 3;
-    switch (climaRandom) {
-        case 0:
-            climaActual = SOLEADO;
-            temperatura = 25.0f;
-            velocidadClima = 14.0f;
-            break;
-        case 1:
-            climaActual = LLUVIA;
-            temperatura = 15.0f;
-            velocidadClima = 10.7f;
-            break;
-        case 2:
-            climaActual = NIEVE;
-            temperatura = -5.0f;
-            velocidadClima = 20.f;
-            break;
+    
+    {
+        std::lock_guard<std::mutex> lock(climaMutex);  
+        switch (climaRandom) {
+            case 0:
+                climaActual = SOLEADO;
+                temperatura = 25.0f;
+                velocidadClima = 14.0f;
+                break;
+            case 1:
+                climaActual = LLUVIA;
+                temperatura = 15.0f;
+                velocidadClima = 10.7f;
+                break;
+            case 2:
+                climaActual = NIEVE;
+                temperatura = -5.0f;
+                velocidadClima = 20.0f;
+                break;
+        }
     }
-    actualizarVelocidadesDeVehiculos();
+
+    std::thread([this]() {
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(15));
+
+        {
+            std::lock_guard<std::mutex> lock(climaMutex);
+            if (climaActual == NIEVE || climaActual == LLUVIA) {
+                temperatura += (rand() % 3 - 1);
+            }
+
+            if (temperatura < -10.0f) {
+                temperatura = -10.0f;
+            } else if (temperatura > 35.0f) {
+                temperatura = 35.0f;
+            }
+
+        }
+    }}).detach(); 
 }
 
 void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
@@ -339,10 +362,18 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
     panelSuperior.setPosition(0, 0);
     window.draw(panelSuperior);
 
+    std::string textoClimaActual;
+    float tempActual;
+    {
+        std::lock_guard<std::mutex> lock(climaMutex); 
+        textoClimaActual = obtenerNombreClima(climaActual);
+        tempActual = temperatura;
+    }
+
     sf::Text textoClima;
     textoClima.setFont(font);
-    std::ostringstream climaTexto; 
-    climaTexto << "Clima: " << obtenerNombreClima(climaActual) << ", " << std::fixed << std::setprecision(1) << temperatura << "°C";
+    std::ostringstream climaTexto;
+    climaTexto << "Clima: " << textoClimaActual << ", " << std::fixed << std::setprecision(1) << tempActual << "°C";
     textoClima.setString(climaTexto.str());
     textoClima.setCharacterSize(25);
     textoClima.setFillColor(sf::Color::Black);

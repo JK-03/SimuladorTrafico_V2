@@ -7,6 +7,7 @@
 #include "Grafo.h"
 #include "Trafico/ArbolSemaforos.h"
 #include "Trafico/NodoArbol.h"
+#include <mutex>
 
 class NodoArbol;
 class Carro; 
@@ -72,7 +73,6 @@ private:
     bool mostrarMensajeSemaforos = false;
     bool mostrarMensajeCalles = false;
 
-
     enum Clima { SOLEADO, LLUVIA, NIEVE };
     Clima climaActual;
     float temperatura;
@@ -80,6 +80,8 @@ private:
 
     std::string obtenerNombreClima(Clima clima);
     void actualizarVelocidadesDeVehiculos();
+
+    std::mutex climaMutex;
 };
 
 #endif // INTERFAZ_H
