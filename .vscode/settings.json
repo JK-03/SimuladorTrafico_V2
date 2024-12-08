@@ -69,6 +69,8 @@
         "iomanip": "cpp",
         "visualsimulador": "cpp",
         "vistasimulador": "cpp",
-        "carroespecial": "cpp"
+        "carroespecial": "cpp",
+        "charconv": "cpp",
+        "forward_list": "cpp"
     }
 }

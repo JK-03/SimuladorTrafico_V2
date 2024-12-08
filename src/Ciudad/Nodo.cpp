@@ -112,6 +112,10 @@ void Nodo::cerrarCalle() {
     estaCerrada = true;
 }
 
+void Nodo::abrirCalle() {
+    estaCerrada = false; 
+}
+
 sf::Vector2f Nodo::getPosicion() const {
     return posicion;
 }

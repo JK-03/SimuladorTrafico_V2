@@ -45,6 +45,7 @@ public:
     void setColor(sf::Color color);
     void cerrarCalle();   
     bool esCerrada() const;
+    void abrirCalle();
 
     sf::Vector2f getPosicion() const;
 

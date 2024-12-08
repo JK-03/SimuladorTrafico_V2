@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <random>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     : font(fuente), botonManager(fuente), grafo(grafo), espaciado(200.0f), climaActual(SOLEADO), temperatura(25.0f), velocidadClima(1.0f) {
@@ -77,42 +79,63 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 310), [this, &grafo]() {
-        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+    Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+    std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
 
-        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
+    if (!conexiones.empty()) {
+        static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+        Nodo* nodoConectado = nullptr;
 
-        if (!conexiones.empty()) {
-            static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
-            Nodo* nodoConectado = nullptr;
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(conexiones.begin(), conexiones.end(), g);
 
-            std::random_device rd;
-            std::mt19937 g(rd());
-            std::shuffle(conexiones.begin(), conexiones.end(), g);
+        for (Nodo* nodoCandidato : conexiones) {
+            if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
+                conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
 
-            for (Nodo* nodoCandidato : conexiones) {
-                if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
-                    conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
-
-                    nodoConectado = nodoCandidato;
-                    break;
-                }
+                nodoConectado = nodoCandidato;
+                break;
             }
-
-            if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
-                nodoRelacionado->cerrarCalle();
-                nodoConectado->cerrarCalle();
-
-                conexionesCerradas.insert({nodoRelacionado, nodoConectado});
-                conexionesCerradas.insert({nodoConectado, nodoRelacionado});
-
-                nodoRelacionado->setColor(sf::Color::Red); 
-                nodoConectado->setColor(sf::Color::Red); 
-
-                std::cout << "Calle cerrada entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
-            }
-
         }
-    });
+
+        if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
+            nodoRelacionado->cerrarCalle();
+            nodoConectado->cerrarCalle();
+
+            conexionesCerradas.insert({nodoRelacionado, nodoConectado});
+            conexionesCerradas.insert({nodoConectado, nodoRelacionado});
+
+            nodoRelacionado->setColor(sf::Color::Red); 
+            nodoConectado->setColor(sf::Color::Red); 
+
+
+            const int tiempoReapertura = 60;
+
+            std::shared_ptr<Nodo> nodoRelacionadoPtr(nodoRelacionado, [](Nodo*) {});
+            std::shared_ptr<Nodo> nodoConectadoPtr(nodoConectado, [](Nodo*) {});
+
+            std::thread([nodoRelacionadoPtr, nodoConectadoPtr, tiempoReapertura]() {
+                std::this_thread::sleep_for(std::chrono::seconds(tiempoReapertura));
+
+                nodoRelacionadoPtr->abrirCalle();
+                nodoConectadoPtr->abrirCalle();
+
+                nodoRelacionadoPtr->setColor(sf::Color::White); 
+                nodoConectadoPtr->setColor(sf::Color::White); 
+
+                // Acceso directo a la variable estática
+                static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+                conexionesCerradas.erase({nodoRelacionadoPtr.get(), nodoConectadoPtr.get()});
+                conexionesCerradas.erase({nodoConectadoPtr.get(), nodoRelacionadoPtr.get()});
+
+                std::cout << "Calle reabierta entre " << nodoRelacionadoPtr->obtenerNombre() << " y " << nodoConectadoPtr->obtenerNombre() << "\n";
+            }).detach();
+        }
+    }
+});
+
+
 
     botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 420), [this, &grafo]() {
         if (grafo.obtenerCantidadNodos() == 0) {
