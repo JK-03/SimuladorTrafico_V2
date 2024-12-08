@@ -79,78 +79,65 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 310), [this, &grafo]() {
-    Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
-    
-    // Verificar si el nodo obtenido es válido
-    if (nodoRelacionado == nullptr) {
-        std::cerr << "No se pudo obtener un nodo aleatorio válido." << std::endl;
-        return;
-    }
-    
-    std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
-
-    // Verificar si el nodo tiene conexiones disponibles
-    if (conexiones.empty()) {
-        std::cerr << "El nodo no tiene conexiones disponibles." << std::endl;
-        return;
-    }
-
-    static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
-    Nodo* nodoConectado = nullptr;
-
-    // Barajar las conexiones para elegir una al azar
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(conexiones.begin(), conexiones.end(), g);
-
-    // Buscar una conexión que no esté cerrada
-    for (Nodo* nodoCandidato : conexiones) {
-        if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
-            conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
-            
-            nodoConectado = nodoCandidato;
-            break;
+        Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
+        
+        if (nodoRelacionado == nullptr) {
+            std::cerr << "No se pudo obtener un nodo aleatorio válido." << std::endl;
+            return;
         }
-    }
+        
+        std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
 
-    // Si se encontró una conexión válida
-    if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
-        // Cerrar la calle
-        nodoRelacionado->cerrarCalle();
-        nodoConectado->cerrarCalle();
+        if (conexiones.empty()) {
+            std::cerr << "El nodo no tiene conexiones disponibles." << std::endl;
+            return;
+        }
 
-        // Marcar como cerradas las conexiones
-        conexionesCerradas.insert({nodoRelacionado, nodoConectado});
-        conexionesCerradas.insert({nodoConectado, nodoRelacionado});
+        static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+        Nodo* nodoConectado = nullptr;
 
-        // Cambiar el color de los nodos
-        nodoRelacionado->setColor(sf::Color::Red); 
-        nodoConectado->setColor(sf::Color::Red); 
+        std::random_device rd;
+        std::mt19937 g(rd());
+        std::shuffle(conexiones.begin(), conexiones.end(), g);
 
-        const int tiempoReapertura = 60; // 60 segundos
+        for (Nodo* nodoCandidato : conexiones) {
+            if (conexionesCerradas.find({nodoRelacionado, nodoCandidato}) == conexionesCerradas.end() &&
+                conexionesCerradas.find({nodoCandidato, nodoRelacionado}) == conexionesCerradas.end()) {
+                
+                nodoConectado = nodoCandidato;
+                break;
+            }
+        }
 
-        // Crear hilo para reabrir la calle después de un tiempo
-        std::thread([nodoRelacionado, nodoConectado, tiempoReapertura]() {
-            std::this_thread::sleep_for(std::chrono::seconds(tiempoReapertura));
+        if (nodoRelacionado != nullptr && nodoConectado != nullptr) {
+            nodoRelacionado->cerrarCalle();
+            nodoConectado->cerrarCalle();
 
-            // Reabrir la calle
-            nodoRelacionado->abrirCalle();
-            nodoConectado->abrirCalle();
+            conexionesCerradas.insert({nodoRelacionado, nodoConectado});
+            conexionesCerradas.insert({nodoConectado, nodoRelacionado});
 
-            // Cambiar el color de los nodos a su color original
-            nodoRelacionado->setColor(sf::Color::White); 
-            nodoConectado->setColor(sf::Color::White); 
+            nodoRelacionado->setColor(sf::Color::Red); 
+            nodoConectado->setColor(sf::Color::Red); 
 
-            // Eliminar la conexión cerrada
-            static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
-            conexionesCerradas.erase({nodoRelacionado, nodoConectado});
-            conexionesCerradas.erase({nodoConectado, nodoRelacionado});
+            const int tiempoReapertura = 60;
 
-            std::cout << "Calle reabierta entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
-        }).detach();
-    }
-});
+            std::thread([nodoRelacionado, nodoConectado, tiempoReapertura]() {
+                std::this_thread::sleep_for(std::chrono::seconds(tiempoReapertura));
 
+                nodoRelacionado->abrirCalle();
+                nodoConectado->abrirCalle();
+
+                nodoRelacionado->setColor(sf::Color::White); 
+                nodoConectado->setColor(sf::Color::White); 
+
+                static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
+                conexionesCerradas.erase({nodoRelacionado, nodoConectado});
+                conexionesCerradas.erase({nodoConectado, nodoRelacionado});
+
+                std::cout << "Calle reabierta entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
+            }).detach();
+        }
+    });
 
     botonManager.agregarBoton("Carros++", sf::Vector2f(1285, 420), [this, &grafo]() {
         if (grafo.obtenerCantidadNodos() == 0) {
