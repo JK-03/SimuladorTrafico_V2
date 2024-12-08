@@ -8,6 +8,7 @@
 #include "Trafico/ArbolSemaforos.h"
 #include "Trafico/NodoArbol.h"
 #include <mutex>
+#include "GestorImagenes.h"
 
 class NodoArbol;
 class Carro; 
@@ -38,6 +39,7 @@ public:
     void dibujarMensajeGrafoVacio(sf::RenderWindow& window);
     void dibujarMensajeSemaforo(sf::RenderWindow& window);
     void dibujarMensajeCalle(sf::RenderWindow& window);
+    void dibujarClima(sf::RenderWindow& ventana);
     void mostrarMensajeTemporal();
 
     // Métodos de control de mensajes
@@ -58,6 +60,7 @@ public:
 private:
     // Miembros de datos
     ArbolSemaforos* arbolSemaforos;
+    GestorImagenes gestorImagenes;
     std::unordered_map<Nodo*, Semaforo*> mapaSemaforos;
     sf::Font font;
     sf::Clock relojMensaje;
@@ -81,6 +84,8 @@ private:
     Clima climaActual;
     float temperatura;
     float velocidadClima;
+    sf::Sprite spriteClima;
+    sf::Texture imagenClima; 
 
     // Métodos privados de ayuda
     std::string obtenerNombreClima(Clima clima);

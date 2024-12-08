@@ -7,6 +7,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/TrafficSimulation.dir/src/Ciudad/Semaforo.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/BotonManager.cpp.o"
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/BotonManager.cpp.o.d"
+  "CMakeFiles/TrafficSimulation.dir/src/Interfaz/GestorImagenes.cpp.o"
+  "CMakeFiles/TrafficSimulation.dir/src/Interfaz/GestorImagenes.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.o"
   "CMakeFiles/TrafficSimulation.dir/src/Interfaz/Interfaz.cpp.o.d"
   "CMakeFiles/TrafficSimulation.dir/src/Trafico/ArbolSemaforos.cpp.o"

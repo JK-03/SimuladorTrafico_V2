@@ -20,6 +20,11 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
 
     arbolSemaforos = new ArbolSemaforos();
 
+    if (!imagenClima.loadFromFile("../Resources/Soleado.png")) {
+        std::cerr << "Error al cargar la imagen del clima." << std::endl;
+    }
+    spriteClima.setTexture(imagenClima);
+
     botonManager.agregarBoton("Calles++", sf::Vector2f(1285, 190), [this]() {
         sf::FloatRect areaValida(50, 50, 1100, 700);
         agregarNodoActivo = true;
@@ -333,7 +338,7 @@ void Interfaz::cambiarClima() {
 
     std::thread([this]() {
     while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(15));
+        std::this_thread::sleep_for(std::chrono::seconds(6));
 
         {
             std::lock_guard<std::mutex> lock(climaMutex);
@@ -383,6 +388,7 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
     dibujarMensajeGrafoVacio(window);
     dibujarMensajeSemaforo(window);
     dibujarMensajeCalle(window);
+    dibujarClima(window);
 }
 
 std::string Interfaz::obtenerNombreClima(Clima clima) {
@@ -621,4 +627,28 @@ ArbolSemaforos* Interfaz::obtenerArbolSemaforos() {
 
 float Interfaz::obtenerVelocidadClima() const {
     return velocidadClima;
+}
+
+void Interfaz::dibujarClima(sf::RenderWindow& ventana) {
+    std::string climaString;
+    sf::Vector2f posicionClima;
+    switch (climaActual) {
+        case SOLEADO:
+            climaString = "Soleado"; 
+            posicionClima = sf::Vector2f(250, 1);
+            break;
+        case LLUVIA:
+            climaString = "Lluvia"; 
+            posicionClima = sf::Vector2f(230, 1);
+            break;
+        case NIEVE:
+            climaString = "Nieve";  
+            posicionClima = sf::Vector2f(220, 1);
+            break;
+        default:
+            std::cerr << "Estado de clima no reconocido" << std::endl;
+            return;
+    }
+
+    gestorImagenes.dibujarImagen(climaString, ventana, posicionClima, 0.05f, 0.05f);
 }

@@ -225,6 +225,30 @@ src/Interfaz/BotonManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Interfaz/BotonManager.cpp.s
 .PHONY : src/Interfaz/BotonManager.cpp.s
 
+src/Interfaz/GestorImagenes.o: src/Interfaz/GestorImagenes.cpp.o
+.PHONY : src/Interfaz/GestorImagenes.o
+
+# target to build an object file
+src/Interfaz/GestorImagenes.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Interfaz/GestorImagenes.cpp.o
+.PHONY : src/Interfaz/GestorImagenes.cpp.o
+
+src/Interfaz/GestorImagenes.i: src/Interfaz/GestorImagenes.cpp.i
+.PHONY : src/Interfaz/GestorImagenes.i
+
+# target to preprocess a source file
+src/Interfaz/GestorImagenes.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Interfaz/GestorImagenes.cpp.i
+.PHONY : src/Interfaz/GestorImagenes.cpp.i
+
+src/Interfaz/GestorImagenes.s: src/Interfaz/GestorImagenes.cpp.s
+.PHONY : src/Interfaz/GestorImagenes.s
+
+# target to generate assembly for a file
+src/Interfaz/GestorImagenes.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/TrafficSimulation.dir/build.make CMakeFiles/TrafficSimulation.dir/src/Interfaz/GestorImagenes.cpp.s
+.PHONY : src/Interfaz/GestorImagenes.cpp.s
+
 src/Interfaz/Interfaz.o: src/Interfaz/Interfaz.cpp.o
 .PHONY : src/Interfaz/Interfaz.o
 
@@ -390,6 +414,9 @@ help:
 	@echo "... src/Interfaz/BotonManager.o"
 	@echo "... src/Interfaz/BotonManager.i"
 	@echo "... src/Interfaz/BotonManager.s"
+	@echo "... src/Interfaz/GestorImagenes.o"
+	@echo "... src/Interfaz/GestorImagenes.i"
+	@echo "... src/Interfaz/GestorImagenes.s"
 	@echo "... src/Interfaz/Interfaz.o"
 	@echo "... src/Interfaz/Interfaz.i"
 	@echo "... src/Interfaz/Interfaz.s"
