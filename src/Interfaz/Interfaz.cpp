@@ -79,17 +79,20 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("Cerrar Calle", sf::Vector2f(1285, 310), [this, &grafo]() {
+        if (grafo.obtenerCantidadNodos() < 4) {
+            mostrarMensajeCalles = true;
+            return;
+        }
+
         Nodo* nodoRelacionado = grafo.obtenerNodoAlAzar();
         
         if (nodoRelacionado == nullptr) {
-            std::cerr << "No se pudo obtener un nodo aleatorio válido." << std::endl;
             return;
         }
         
         std::vector<Nodo*> conexiones = grafo.obtenerConexionesDeNodo(nodoRelacionado);
 
         if (conexiones.empty()) {
-            std::cerr << "El nodo no tiene conexiones disponibles." << std::endl;
             return;
         }
 
@@ -133,8 +136,6 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
                 static std::set<std::pair<Nodo*, Nodo*>> conexionesCerradas;
                 conexionesCerradas.erase({nodoRelacionado, nodoConectado});
                 conexionesCerradas.erase({nodoConectado, nodoRelacionado});
-
-                std::cout << "Calle reabierta entre " << nodoRelacionado->obtenerNombre() << " y " << nodoConectado->obtenerNombre() << "\n";
             }).detach();
         }
     });
@@ -351,6 +352,7 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
     dibujarMensajeLimite(window);
     dibujarMensajeGrafoVacio(window);
     dibujarMensajeSemaforo(window);
+    dibujarMensajeCalle(window);
 }
 
 std::string Interfaz::obtenerNombreClima(Clima clima) {
@@ -515,6 +517,27 @@ void Interfaz::dibujarMensajeSemaforo(sf::RenderWindow& window) {
 
         if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
             mostrarMensajeSemaforos = false;
+        }
+    }
+}
+
+void Interfaz::dibujarMensajeCalle(sf::RenderWindow& window) {
+    if (mostrarMensajeCalles) {
+        sf::Font fontMenu;
+        if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {
+            return;
+        }
+        sf::Text mensajeGrafoVacio("Necesitas mas calles para poder cerrar una calle", fontMenu, 25);
+        mensajeGrafoVacio.setFillColor(sf::Color::Black);
+
+        float mensajeX = window.getSize().x - 540.0f;
+        float mensajeY = 10.0f; 
+        mensajeGrafoVacio.setPosition(mensajeX, mensajeY);
+
+        window.draw(mensajeGrafoVacio);
+
+        if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
+            mostrarMensajeCalles = false;
         }
     }
 }

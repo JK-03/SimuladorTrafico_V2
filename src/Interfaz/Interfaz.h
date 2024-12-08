@@ -24,6 +24,7 @@ public:
     void dibujarMensajeLimite(sf::RenderWindow& window);
     void dibujarMensajeGrafoVacio(sf::RenderWindow& window);
     void dibujarMensajeSemaforo(sf::RenderWindow& window);
+    void dibujarMensajeCalle(sf::RenderWindow& window);
     void actualizarVelocidad(float nuevaVelocidad); 
     void cambiarClima();
     void dibujarSemaforos(sf::RenderWindow& window);
@@ -69,6 +70,7 @@ private:
     bool mostrarMensaje = true; 
     bool mostrarMensajeGrafoVacio = false;
     bool mostrarMensajeSemaforos = false;
+    bool mostrarMensajeCalles = false;
 
 
     enum Clima { SOLEADO, LLUVIA, NIEVE };
