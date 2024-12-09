@@ -27,10 +27,12 @@ bool Grafo::estaAristaLibre(const std::string& desde, const std::string& hacia) 
 }
 
 sf::Vector2f Grafo::obtenerPosicionNodo(const std::string& nombreNodo) const {
+    std::cout << "Buscando nodo: " << nombreNodo << std::endl;
     auto it = nodos.find(nombreNodo);
     if (it != nodos.end()) {
         return it->second.getPosicion();
     }
+    std::cerr << "Error: Nodo no encontrado: " << nombreNodo << std::endl;
     throw std::runtime_error("Nodo no encontrado: " + nombreNodo);
 }
 
@@ -184,15 +186,28 @@ std::vector<std::pair<const std::string, Nodo>> Grafo::getNodos() const {
 }
 
 std::string Grafo::obtenerNodoDesdePosicion(const sf::Vector2f& posicion, float margen) const {
+    const float EPSILON = 0.001f;
+
     for (const auto& [nombreNodo, nodo] : nodos) {
         sf::Vector2f posicionNodo = nodo.obtenerPosicion();
+        
+        float distancia = std::sqrt(
+            (posicionNodo.x - posicion.x) * (posicionNodo.x - posicion.x) +
+            (posicionNodo.y - posicion.y) * (posicionNodo.y - posicion.y)
+        );
 
-        if (std::abs(posicionNodo.x - posicion.x) <= margen && 
-            std::abs(posicionNodo.y - posicion.y) <= margen) {
+        std::cerr << "Distancia a nodo " << nombreNodo << ": " << distancia << std::endl;
+
+        if (distancia <= margen + EPSILON) {
+            std::cerr << "Nodo encontrado: " << nombreNodo << std::endl;
             return nombreNodo;
         }
     }
-    return ""; 
+
+    std::cerr << "Nodo no encontrado para la posición (" << posicion.x << ", " << posicion.y << ") con margen: " << margen << std::endl;
+
+    margen += 50;  
+    return obtenerNodoDesdePosicion(posicion, margen);
 }
 
 std::unordered_map<std::string, Nodo> Grafo::obtenerNodos() const {
