@@ -406,6 +406,10 @@ void Interfaz::actualizarVelocidadesDeVehiculos() {
     for (auto* carro : vehiculos) {
         carro->actualizarVelocidad(velocidadClima);
     }
+
+    for (auto* carroEspecial : vehiculosEspecial) {
+        carroEspecial->actualizarVelocidad(velocidadClima);
+    }
 }
 
 void Interfaz::crearPanelDerecho(sf::RenderWindow& window) {
