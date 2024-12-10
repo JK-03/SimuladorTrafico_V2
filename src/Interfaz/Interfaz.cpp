@@ -292,15 +292,30 @@ Interfaz::Interfaz(const sf::Font& fuente, Grafo& grafo)
     });
 
     botonManager.agregarBoton("E. Colisiones", sf::Vector2f(1285, 540), [this]() {
+        hayColisiones = false;
+
+        for (auto it = vehiculos.begin(); it != vehiculos.end(); ++it) {
+            if ((*it)->colisionado) {
+                hayColisiones = true;
+                break;
+            }
+        }
+
+        if (!hayColisiones) {
+            hayColisiones = true;
+            return;
+        }
+
         for (auto it = vehiculos.begin(); it != vehiculos.end(); ) {
             if ((*it)->colisionado) {
-                delete *it; 
-                it = vehiculos.erase(it); 
+                delete *it;
+                it = vehiculos.erase(it);
             } else {
-                ++it; 
+                ++it;
             }
         }
     });
+
 
     botonManager.agregarBoton("Clima", sf::Vector2f(1285, 650), [this]() {
         cambiarClima();  
@@ -390,6 +405,7 @@ void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {
     dibujarMensajeGrafoVacio(window);
     dibujarMensajeSemaforo(window);
     dibujarMensajeCalle(window);
+    dibujarMensajeColision(window);
     dibujarClima(window);
 }
 
@@ -517,6 +533,7 @@ void Interfaz::dibujarMensajeLimite(sf::RenderWindow& window) {
 
         if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
             mostrarMensajeLimite = false;
+            mensajeReloj.restart();
         }
     }
 }
@@ -538,6 +555,7 @@ void Interfaz::dibujarMensajeGrafoVacio(sf::RenderWindow& window) {
 
         if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
             mostrarMensajeGrafoVacio = false;
+            mensajeReloj.restart();
         }
     }
 }
@@ -559,6 +577,7 @@ void Interfaz::dibujarMensajeSemaforo(sf::RenderWindow& window) {
 
         if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
             mostrarMensajeSemaforos = false;
+            mensajeReloj.restart();
         }
     }
 }
@@ -580,6 +599,29 @@ void Interfaz::dibujarMensajeCalle(sf::RenderWindow& window) {
 
         if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
             mostrarMensajeCalles = false;
+            mensajeReloj.restart();
+        }
+    }
+}
+
+void Interfaz::dibujarMensajeColision(sf::RenderWindow& window) {
+    if (hayColisiones) {
+        sf::Font fontMenu;
+        if (!fontMenu.loadFromFile("../Resources/Lobster-Regular.ttf")) {
+            return;
+        }
+        sf::Text mensajeGrafoVacio("No hay colisiones", fontMenu, 25);
+        mensajeGrafoVacio.setFillColor(sf::Color::Black);
+
+        float mensajeX = window.getSize().x - 200.0f;
+        float mensajeY = 10.0f; 
+        mensajeGrafoVacio.setPosition(mensajeX, mensajeY);
+
+        window.draw(mensajeGrafoVacio);
+
+        if (mensajeReloj.getElapsedTime().asSeconds() >= tiempoMensajeVisible) {
+            hayColisiones = false;
+            mensajeReloj.restart();
         }
     }
 }

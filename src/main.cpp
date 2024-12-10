@@ -88,5 +88,9 @@ int main() {
         delete carro;
     }
 
+    for (auto& carroEspecial : interfaz.obtenerVehiculosEspeciales()) {
+        delete carroEspecial;
+    }
+
     return 0;
 }

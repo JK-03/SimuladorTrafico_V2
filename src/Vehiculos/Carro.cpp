@@ -262,8 +262,8 @@ bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
             );
 
             if (distancia < radioColision) {
-                std::string nodoActual = grafo.obtenerNodoDesdePosicion(this->posicion, 35.0f);
-                std::string nodoOtroCarro = grafo.obtenerNodoDesdePosicion(otroCarro->obtenerPosicion(), 35.0f);
+                std::string nodoActual = grafo.obtenerNodoDesdePosicionCOLI(this->posicion, 35.0f);
+                std::string nodoOtroCarro = grafo.obtenerNodoDesdePosicionCOLI(otroCarro->obtenerPosicion(), 35.0f);
 
                 if (nodosSemaforos.find(nodoActual) != nodosSemaforos.end() &&
                     nodosSemaforos.find(nodoOtroCarro) != nodosSemaforos.end()) {
@@ -293,6 +293,7 @@ bool Carro::verificarColisiones(const std::vector<Carro*>& listaDeCarros) {
 
     return false; 
 }
+
 
 void Carro::actualizarVelocidad(float nuevaVelocidad) {
     if (!colisionado) {

@@ -202,6 +202,18 @@ std::string Grafo::obtenerNodoDesdePosicion(const sf::Vector2f& posicion, float 
     return obtenerNodoDesdePosicion(posicion, margen);
 }
 
+std::string Grafo::obtenerNodoDesdePosicionCOLI(const sf::Vector2f& posicion, float margen) const {
+    for (const auto& [nombreNodo, nodo] : nodos) {
+        sf::Vector2f posicionNodo = nodo.obtenerPosicion();
+
+        if (std::abs(posicionNodo.x - posicion.x) <= margen && 
+            std::abs(posicionNodo.y - posicion.y) <= margen) {
+            return nombreNodo;
+        }
+    }
+    return ""; 
+}
+
 std::unordered_map<std::string, Nodo> Grafo::obtenerNodos() const {
     std::unordered_map<std::string, Nodo> nodosUnorderedMap;
     for (const auto& par : nodos) {

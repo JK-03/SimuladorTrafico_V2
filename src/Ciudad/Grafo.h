@@ -41,6 +41,7 @@ public:
     std::vector<std::pair<const std::string, Nodo>> getNodos() const;
     std::unordered_map<std::string, Nodo> obtenerNodos() const;
     std::map<std::string, Nodo> getNodosSemaforos() const;
+    std::string obtenerNodoDesdePosicionCOLI(const sf::Vector2f& posicion, float margen) const;
     Nodo* obtenerNodoAlAzar();
     Nodo* obtenerNodoPorNombre(const std::string& nombreNodo);
     size_t obtenerCantidadNodos() const;

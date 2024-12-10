@@ -39,6 +39,7 @@ public:
     void dibujarMensajeGrafoVacio(sf::RenderWindow& window);
     void dibujarMensajeSemaforo(sf::RenderWindow& window);
     void dibujarMensajeCalle(sf::RenderWindow& window);
+    void dibujarMensajeColision(sf::RenderWindow& window);
     void dibujarClima(sf::RenderWindow& ventana);
     void mostrarMensajeTemporal();
 
@@ -78,6 +79,7 @@ private:
     bool mostrarMensajeGrafoVacio = false;
     bool mostrarMensajeSemaforos = false;
     bool mostrarMensajeCalles = false;
+    bool hayColisiones = false;
 
     // Datos de clima
     enum Clima { SOLEADO, LLUVIA, NIEVE };
