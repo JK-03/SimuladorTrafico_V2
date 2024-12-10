@@ -27,13 +27,10 @@ bool Grafo::estaAristaLibre(const std::string& desde, const std::string& hacia) 
 }
 
 sf::Vector2f Grafo::obtenerPosicionNodo(const std::string& nombreNodo) const {
-    std::cout << "Buscando nodo: " << nombreNodo << std::endl;
     auto it = nodos.find(nombreNodo);
     if (it != nodos.end()) {
         return it->second.getPosicion();
     }
-    std::cerr << "Error: Nodo no encontrado: " << nombreNodo << std::endl;
-    throw std::runtime_error("Nodo no encontrado: " + nombreNodo);
 }
 
 bool Grafo::estaSemaforoVerde(const std::string& nodo) const {
@@ -196,15 +193,10 @@ std::string Grafo::obtenerNodoDesdePosicion(const sf::Vector2f& posicion, float 
             (posicionNodo.y - posicion.y) * (posicionNodo.y - posicion.y)
         );
 
-        std::cerr << "Distancia a nodo " << nombreNodo << ": " << distancia << std::endl;
-
         if (distancia <= margen + EPSILON) {
-            std::cerr << "Nodo encontrado: " << nombreNodo << std::endl;
             return nombreNodo;
         }
     }
-
-    std::cerr << "Nodo no encontrado para la posición (" << posicion.x << ", " << posicion.y << ") con margen: " << margen << std::endl;
 
     margen += 50;  
     return obtenerNodoDesdePosicion(posicion, margen);

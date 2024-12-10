@@ -321,12 +321,12 @@ void Interfaz::cambiarClima() {
             case 0:
                 climaActual = SOLEADO;
                 temperatura = 25.0f;
-                velocidadClima = 14.0f;
+                velocidadClima = 15.0f;
                 break;
             case 1:
                 climaActual = LLUVIA;
                 temperatura = 15.0f;
-                velocidadClima = 10.7f;
+                velocidadClima = 5.7f;
                 break;
             case 2:
                 climaActual = NIEVE;
@@ -354,6 +354,8 @@ void Interfaz::cambiarClima() {
 
         }
     }}).detach(); 
+
+    actualizarVelocidadesDeVehiculos();
 }
 
 void Interfaz::crearPanelSuperior(sf::RenderWindow& window) {

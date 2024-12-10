@@ -44,114 +44,100 @@ void Carro::mover(float deltaTime) {
         return;
     }
 
-    try {
-        if (ruta.empty()) {
-            throw std::runtime_error("La ruta está vacía.");
+    if (ruta.empty()) {
+        return;
+    }
+
+    std::string nodoPrevio;
+    if (ruta.size() != 1) {
+        nodoPrevio = grafo.obtenerNodoDesdePosicion(ruta.back(), 50.0f); 
+        if (nodoPrevio.empty()) {
+            return;
+        }
+    }
+
+    if (ruta.size() == 1) {
+        std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion, 50.0f);
+        if (nodoActual.empty()) {
+            return;
         }
 
-        // Evaluar la ruta antes de cualquier otro procesamiento
-        std::string nodoPrevio;
-        if (ruta.size() != 1) {
-            nodoPrevio = grafo.obtenerNodoDesdePosicion(ruta.back(), 50.0f);  // Aumentado el margen
-            if (nodoPrevio.empty()) {
-                std::cerr << "Nodo previo no encontrado desde la ruta." << std::endl;
-                throw std::runtime_error("Nodo previo no encontrado desde la ruta.");
-            }
+        std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(
+            grafo, nodoActual, 5, nodoPrevio);
+
+        if (!nuevaRuta.empty()) {
+            posicion = nuevaRuta.front();
+            ruta = nuevaRuta;
+        }
+        return;
+    }
+
+    verificarSemaforos(arbolSemaforos);
+
+    if (ruta.size() >= 2) {
+        sf::Vector2f posicionActual = ruta.front();
+        sf::Vector2f posicionSiguiente = ruta[1];
+
+        std::string nodoActualNombre = grafo.obtenerNodoDesdePosicion(posicionActual, 50.0f);
+        if (nodoActualNombre.empty()) {
+            return;
         }
 
-        if (ruta.size() == 1) {
-            std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion, 50.0f);  // Aumentado el margen
-            if (nodoActual.empty()) {
-                std::cerr << "Nodo actual no encontrado desde la posición (" << posicion.x << ", " << posicion.y << ")" << std::endl;
-                throw std::runtime_error("Nodo actual no encontrado desde la posición.");
-            }
+        std::string nodoSiguienteNombre = grafo.obtenerNodoDesdePosicion(posicionSiguiente, 50.0f);
+        if (nodoSiguienteNombre.empty()) {
+            return;
+        }
 
+        Nodo* nodoSiguiente = grafo.obtenerNodoPorNombre(nodoSiguienteNombre);
+        if (nodoSiguiente && nodoSiguiente->esCerrada()) {
             std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(
-                grafo, nodoActual, 5, nodoPrevio);
+                grafo, nodoActualNombre, 5, nodoPrevio);
 
             if (!nuevaRuta.empty()) {
-                posicion = nuevaRuta.front();
                 ruta = nuevaRuta;
-            } else {
-                std::cerr << "No se generó una nueva ruta." << std::endl;
+                posicion = ruta.front();
             }
             return;
         }
 
-        verificarSemaforos(arbolSemaforos);
+        sf::Vector2f direccion = posicionSiguiente - posicionActual;
+        float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
+        if (distanciaTotal > 0) {
+            direccion /= distanciaTotal;
+        }
 
-        if (ruta.size() >= 2) {
-            sf::Vector2f posicionActual = ruta.front();
-            sf::Vector2f posicionSiguiente = ruta[1];
+        sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
 
-            std::string nodoActualNombre = grafo.obtenerNodoDesdePosicion(posicionActual, 50.0f);  // Aumentado el margen
-            if (nodoActualNombre.empty()) {
-                std::cerr << "Nodo actual no encontrado desde la posición (" << posicionActual.x << ", " << posicionActual.y << ")" << std::endl;
-                throw std::runtime_error("Nodo actual no encontrado desde la posición.");
-            }
+        float distanciaRecorrida = std::sqrt(
+            (nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
+            (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)
+        );
 
-            std::string nodoSiguienteNombre = grafo.obtenerNodoDesdePosicion(posicionSiguiente, 50.0f);  // Aumentado el margen
-            if (nodoSiguienteNombre.empty()) {
-                std::cerr << "Nodo siguiente no encontrado desde la posición (" << posicionSiguiente.x << ", " << posicionSiguiente.y << ")" << std::endl;
-                throw std::runtime_error("Nodo siguiente no encontrado desde la posición.");
-            }
+        if (distanciaRecorrida >= distanciaTotal - 0.1f) {
+            ruta.erase(ruta.begin());
 
-            Nodo* nodoSiguiente = grafo.obtenerNodoPorNombre(nodoSiguienteNombre);
-            if (nodoSiguiente && nodoSiguiente->esCerrada()) {
+            if (!ruta.empty()) {
+                posicion = ruta.front();
+            } else {
+                std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion, 50.0f);
+                if (nodoActual.empty()) {
+                    return;
+                }
+
                 std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(
-                    grafo, nodoActualNombre, 5, nodoPrevio);
+                    grafo, nodoActual, 5, nodoPrevio);
 
                 if (!nuevaRuta.empty()) {
                     ruta = nuevaRuta;
                     posicion = ruta.front();
                 }
-                return;
             }
-
-            sf::Vector2f direccion = posicionSiguiente - posicionActual;
-            float distanciaTotal = std::sqrt(direccion.x * direccion.x + direccion.y * direccion.y);
-            if (distanciaTotal > 0) {
-                direccion /= distanciaTotal;
-            }
-
-            sf::Vector2f nuevaPosicion = posicion + direccion * velocidad * deltaTime;
-
-            float distanciaRecorrida = std::sqrt(
-                (nuevaPosicion.x - posicionActual.x) * (nuevaPosicion.x - posicionActual.x) +
-                (nuevaPosicion.y - posicionActual.y) * (nuevaPosicion.y - posicionActual.y)
-            );
-
-            if (distanciaRecorrida >= distanciaTotal - 0.1f) {
-                ruta.erase(ruta.begin());
-
-                if (!ruta.empty()) {
-                    posicion = ruta.front();
-                } else {
-                    std::string nodoActual = grafo.obtenerNodoDesdePosicion(posicion, 50.0f);  // Aumentado el margen
-                    if (nodoActual.empty()) {
-                        std::cerr << "Nodo actual no encontrado desde la posición (" << posicion.x << ", " << posicion.y << ")" << std::endl;
-                        throw std::runtime_error("Nodo actual no encontrado desde la posición.");
-                    }
-
-                    std::vector<sf::Vector2f> nuevaRuta = generarRutaCiclicaSinNodoPrevio(
-                        grafo, nodoActual, 5, nodoPrevio);
-
-                    if (!nuevaRuta.empty()) {
-                        ruta = nuevaRuta;
-                        posicion = ruta.front();
-                    } else {
-                        std::cerr << "No se generó una nueva ruta." << std::endl;
-                    }
-                }
-            } else {
-                posicion = nuevaPosicion;
-            }
+        } else {
+            posicion = nuevaPosicion;
         }
-
-        sprite.setPosition(posicion);
-    } catch (const std::exception& e) {
-        std::cerr << "Error en Carro::mover: " << e.what() << std::endl;
     }
+
+    sprite.setPosition(posicion);
 }
 
 std::vector<sf::Vector2f> Carro::generarRutaCiclicaSinNodoPrevio(
